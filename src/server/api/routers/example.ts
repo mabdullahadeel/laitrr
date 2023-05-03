@@ -5,6 +5,7 @@ import {
   publicProcedure,
   protectedProcedure,
 } from "@/server/api/trpc";
+import { getTweets } from "@/server/core/twitter";
 
 export const exampleRouter = createTRPCRouter({
   hello: publicProcedure
@@ -19,7 +20,13 @@ export const exampleRouter = createTRPCRouter({
     return ctx.prisma.example.findMany();
   }),
 
-  getSecretMessage: protectedProcedure.query(() => {
-    return "you can now see this secret message!";
+  getSecretMessage: protectedProcedure.query(({ ctx }) => {
+    return `Hello ${
+      ctx.session.user.name || "Unknown"
+    }  you can now see this secret message!`;
+  }),
+
+  fetchTweets: protectedProcedure.query(async () => {
+    return await getTweets("abdadeel");
   }),
 });

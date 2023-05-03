@@ -1,10 +1,10 @@
 import styles from "./index.module.css";
 import { type NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 import { api } from "@/utils/api";
+import { Button, Text } from "@mantine/core";
 
 const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
@@ -18,33 +18,13 @@ const Home: NextPage = () => {
       </Head>
       <main className={styles.main}>
         <div className={styles.container}>
-          <h1 className={styles.title}>
-            Create <span className={styles.pinkSpan}>T3</span> App
-          </h1>
-          <div className={styles.cardRow}>
-            <Link
-              className={styles.card}
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
-              <h3 className={styles.cardTitle}>First Steps →</h3>
-              <div className={styles.cardText}>
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
-            </Link>
-            <Link
-              className={styles.card}
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className={styles.cardTitle}>Documentation →</h3>
-              <div className={styles.cardText}>
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
-            </Link>
-          </div>
+          <Text className={styles.title}>
+            Create{" "}
+            <Text color="violet" component="span">
+              T3{" "}
+            </Text>
+            App
+          </Text>
           <div className={styles.showcaseContainer}>
             <p className={styles.showcaseText}>
               {hello.data ? hello.data.greeting : "Loading tRPC query..."}
@@ -67,18 +47,26 @@ const AuthShowcase: React.FC = () => {
     { enabled: sessionData?.user !== undefined }
   );
 
+  const tweetQuery = api.example.fetchTweets.useQuery(undefined, {
+    staleTime: Infinity,
+    onSuccess: (data) => {
+      console.log("Tweets", data);
+    },
+    retry: 0,
+  });
+
   return (
     <div className={styles.authContainer}>
       <p className={styles.showcaseText}>
         {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
         {secretMessage && <span> - {secretMessage}</span>}
       </p>
-      <button
-        className={styles.loginButton}
+      <Button
+        color="cyan"
         onClick={sessionData ? () => void signOut() : () => void signIn()}
       >
         {sessionData ? "Sign out" : "Sign in"}
-      </button>
+      </Button>
     </div>
   );
 };
