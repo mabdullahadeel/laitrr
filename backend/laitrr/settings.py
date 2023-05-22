@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "auth.apps.AuthConfig",
 ]
 
+
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -139,7 +140,6 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
-    # YOUR SETTINGS
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -167,3 +167,12 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 AUTH_USER_MODEL = "users.User"
+
+ALLOWED_REDIRECT_URLS = [
+    "http://localhost:3000/auth/google/callback/",
+]
+
+ALLOWED_AUTH_PROVIDERS = ["google-oauth2"]
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str("GOOGLE_OAUTH2_KEY")
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str("GOOGLE_OAUTH2_SECRET")
