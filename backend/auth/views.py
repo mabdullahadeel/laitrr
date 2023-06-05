@@ -7,6 +7,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import serializers
 from django.conf import settings
 from core.response import Response
+from social_core import exceptions as social_core_exceptions
 
 
 class SocialAuthResponseSerializer(serializers.Serializer):
@@ -59,3 +60,43 @@ class SocialAuthView(APIView):
         return Response.success(
             status=status.HTTP_200_OK, data={"authorization_url": authorization_url}
         )
+
+    def _validate_state(self, value):
+        request = self.context["request"]
+        strategy = load_strategy(request)
+        redirect_uri = strategy.session_get("redirect_uri")
+
+        backend_name = self.context["view"].kwargs["provider"]
+        backend = load_backend(strategy, backend_name, redirect_uri=redirect_uri)
+
+        try:
+            backend.validate_state()
+        except social_core_exceptions.AuthMissingParameter:
+            raise serializers.ValidationError(
+                "State could not be found in request data."
+            )
+        except social_core_exceptions.AuthStateMissing:
+            raise serializers.ValidationError(
+                "State could not be found in server-side session data."
+            )
+        except social_core_exceptions.AuthStateForbidden:
+            raise serializers.ValidationError("Invalid state has been provided.")
+
+        return value
+
+    def post(self, request: HttpRequest):
+        if "state" in request.GET:
+            self._validate_state(request.GET["state"])
+
+        strategy = load_strategy(request)
+        redirect_uri = strategy.session_get("redirect_uri")
+
+        backend_name = "google-oauth2"
+        backend = load_backend(strategy, backend_name, redirect_uri=redirect_uri)
+
+        try:
+            user = backend.auth_complete()
+        except social_core_exceptions.AuthException as e:
+            return Response.error(error=str(e))
+
+        return Response.success(data=user)
