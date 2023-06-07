@@ -44,11 +44,20 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
     # third party apps
     "corsheaders",
     "rest_framework",
     "drf_spectacular",
     "django_extensions",
+    "rest_framework.authtoken",
+    #
+    "dj_rest_auth",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "dj_rest_auth.registration",
+    "allauth.socialaccount.providers.google",
     # internal apps
     "users.apps.UsersConfig",
     "auth.apps.AuthConfig",
@@ -142,9 +151,38 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        # "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ),
 }
+
+REST_AUTH = {
+    "JWT_AUTH_REFRESH_COOKIE": "my-refresh-token",
+    "USE_JWT": True,
+    "SESSION_LOGIN": False,
+}
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        # "SCOPE": [
+        #     "profile",
+        #     "email",
+        # ],
+        # "AUTH_PARAMS": {
+        #     "access_type": "online",
+        # },
+        # "METHOD": "oauth2",
+        # "VERIFIED_EMAIL": True,
+        # "VERSION": "v2",
+        "APP": {
+            "client_id": env.str("GOOGLE_OAUTH2_KEY"),
+            "secret": env.str("GOOGLE_OAUTH2_SECRET"),
+            "key": "",
+        },
+    },
+}
+
+SITE_ID = 1
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Laitrr API",
@@ -158,6 +196,7 @@ SIMPLE_JWT = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://127.0.0.1:3000",
     "http://localhost:8000",
 ]
 

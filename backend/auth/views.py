@@ -96,7 +96,7 @@ class SocialAuthView(APIView):
 
         try:
             user = backend.auth_complete()
+            return Response.success(data=user)
         except social_core_exceptions.AuthException as e:
+            print(e)
             return Response.error(error=str(e))
-
-        return Response.success(data=user)
