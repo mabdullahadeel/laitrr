@@ -11,6 +11,7 @@ export const axiosInstance = axios.create({
 
 export const axiosPrivateInstance = axios.create({
   baseURL: BASE_URL,
+  withCredentials: true,
 });
 
 axiosPrivateInstance.interceptors.request.use(

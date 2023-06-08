@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { axiosPrivateInstance } from "@/api/axios";
+import { axiosInstance, axiosPrivateInstance } from "@/api/axios";
 import { useMutation } from "@tanstack/react-query";
 
 import { siteConfig } from "@/config/site";
@@ -28,6 +28,11 @@ export default function IndexPage() {
         "auth/social?redirect_url=http://localhost:3000/auth/google/callback/&provider=google-oauth2"
       );
       return res.data;
+    },
+  });
+  const logout = useMutation({
+    mutationFn: async () => {
+      await axiosPrivateInstance.post("test-auth/logout/");
     },
   });
 
@@ -76,6 +81,13 @@ export default function IndexPage() {
           }}
         >
           Test
+        </Button>
+        <Button
+          onClick={() => {
+            logout.mutate();
+          }}
+        >
+          Logout
         </Button>
       </div>
     </section>
