@@ -17,6 +17,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from dj_rest_auth.jwt_auth import CookieTokenRefreshSerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
@@ -32,11 +35,19 @@ class GoogleLogin(
     client_class = OAuth2Client
 
 
+@api_view(["POST"])
+def refresh_token(request):
+    d = CookieTokenRefreshSerializer(context={"request": request}).validate(
+        request.data
+    )
+    return Response(d, status=200)
+
+
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("dj-rest-auth/", include("dj_rest_auth.urls")),
-    path("dj-rest-auth/", include("dj_rest_auth.urls")),
-    path("dj-rest-auth/registration/", include("dj_rest_auth.registration.urls")),
+    # path("dj-rest-auth/", include("dj_rest_auth.urls")),
+    # path("dj-rest-auth/", include("dj_rest_auth.urls")),
+    # path("dj-rest-auth/registration/", include("dj_rest_auth.registration.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("auth/", include("auth.urls")),
     path(
@@ -45,4 +56,5 @@ urlpatterns = [
         name="swagger-ui",
     ),
     path("dj-rest-auth/google/", GoogleLogin.as_view(), name="google_login"),
+    path("test-auth/refresh/", refresh_token, name="refresh_token"),
 ]

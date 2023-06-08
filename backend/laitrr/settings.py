@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from os import path
 import environ
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -50,13 +51,12 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_spectacular",
     "django_extensions",
-    "rest_framework.authtoken",
     #
     "dj_rest_auth",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "dj_rest_auth.registration",
+    # "dj_rest_auth.registration",
     "allauth.socialaccount.providers.google",
     # internal apps
     "users.apps.UsersConfig",
@@ -160,20 +160,11 @@ REST_AUTH = {
     "JWT_AUTH_REFRESH_COOKIE": "my-refresh-token",
     "USE_JWT": True,
     "SESSION_LOGIN": False,
+    "TOKEN_MODEL": None,
 }
 
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
-        # "SCOPE": [
-        #     "profile",
-        #     "email",
-        # ],
-        # "AUTH_PARAMS": {
-        #     "access_type": "online",
-        # },
-        # "METHOD": "oauth2",
-        # "VERIFIED_EMAIL": True,
-        # "VERSION": "v2",
         "APP": {
             "client_id": env.str("GOOGLE_OAUTH2_KEY"),
             "secret": env.str("GOOGLE_OAUTH2_SECRET"),
@@ -192,6 +183,7 @@ SPECTACULAR_SETTINGS = {
 
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
+    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=5),
 }
 
 CORS_ALLOWED_ORIGINS = [
@@ -199,6 +191,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:8000",
 ]
+
+CORS_ALLOW_CREDENTIALS = True
 
 AUTHENTICATION_BACKENDS = [
     "social_core.backends.google.GoogleOAuth2",

@@ -21,7 +21,9 @@ class Response:
         content_type: Any | None = None,
     ):
         return DRFResponse(
-            data=Response.get_response_dict(data=data, status=status, message="error"),
+            data=Response.get_response_dict(
+                data=data, status=status, message="success"
+            ),
             status=status,
             template_name=template_name,
             headers=headers,

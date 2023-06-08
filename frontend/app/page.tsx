@@ -1,11 +1,14 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import Link from "next/link"
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { axiosPrivateInstance } from "@/api/axios";
+import { useMutation } from "@tanstack/react-query";
 
-import { siteConfig } from "@/config/site"
-import { LoadingButton } from "@/components/ui/button"
-import { buttonVariants } from "@/components/ui/button/button"
+import { siteConfig } from "@/config/site";
+import { LoadingButton } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button/button";
+import { useAccessTokenQuery } from "@/components/hooks/useAuthQuery";
 
 export default function IndexPage() {
   // const res = await fetch(
@@ -18,7 +21,17 @@ export default function IndexPage() {
   // )
   // const data = await res.json()
 
-  const [url, setUrl] = useState("")
+  const query = useAccessTokenQuery();
+  const testMutation = useMutation({
+    mutationFn: async () => {
+      const res = await axiosPrivateInstance.get(
+        "auth/social?redirect_url=http://localhost:3000/auth/google/callback/&provider=google-oauth2"
+      );
+      return res.data;
+    },
+  });
+
+  const [url, setUrl] = useState("");
   useEffect(() => {
     fetch(
       "http://127.0.0.1:8000/auth/social?redirect_url=http://localhost:3000/auth/google/callback/&provider=google-oauth2",
@@ -30,12 +43,12 @@ export default function IndexPage() {
     )
       .then((res) => res.json())
       .then((data) => {
-        setUrl(data.data.authorization_url)
+        setUrl(data.data.authorization_url);
       })
       .catch((err) => {
-        console.log(err)
-      })
-  }, [])
+        console.log(err);
+      });
+  }, []);
 
   return (
     <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
@@ -53,6 +66,18 @@ export default function IndexPage() {
           Login With Google
         </Link>
       </div>
+      <div>
+        <pre>
+          <code>{JSON.stringify(query.data, null, 2)}</code>
+        </pre>
+        <Button
+          onClick={() => {
+            testMutation.mutate();
+          }}
+        >
+          Test
+        </Button>
+      </div>
     </section>
-  )
+  );
 }
