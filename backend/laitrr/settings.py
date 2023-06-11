@@ -14,6 +14,7 @@ from pathlib import Path
 from os import path
 import environ
 from datetime import timedelta
+from auth.utils import AllowedAuthProviders
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -169,6 +170,11 @@ SOCIALACCOUNT_PROVIDERS = {
             "client_id": env.str("GOOGLE_OAUTH2_KEY"),
             "secret": env.str("GOOGLE_OAUTH2_SECRET"),
             "key": "",
+            "scope": [
+                "openid",
+                "email",
+                "profile",
+            ],
         },
     },
 }
@@ -205,7 +211,5 @@ ALLOWED_REDIRECT_URLS = [
     "http://localhost:3000/auth/google/callback/",
 ]
 
-ALLOWED_AUTH_PROVIDERS = ["google-oauth2"]
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str("GOOGLE_OAUTH2_KEY")
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str("GOOGLE_OAUTH2_SECRET")
+ALLOWED_AUTH_PROVIDERS = AllowedAuthProviders.get_auth_providers()
