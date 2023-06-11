@@ -1,5 +1,6 @@
 from rest_framework.response import Response as DRFResponse
 from typing import Any
+from rest_framework import status
 
 SendableJson = dict | Any | None
 
@@ -14,14 +15,16 @@ class Response:
     @staticmethod
     def success(
         data: SendableJson = None,
-        status: int = 200,
+        status: int = status.HTTP_200_OK,
         template_name: Any | None = None,
         headers: Any | None = None,
         exception: bool = False,
         content_type: Any | None = None,
     ):
         return DRFResponse(
-            data=Response.get_response_dict(data=data, status=status, message="error"),
+            data=Response.get_response_dict(
+                data=data, status=status, message="success"
+            ),
             status=status,
             template_name=template_name,
             headers=headers,
@@ -32,7 +35,7 @@ class Response:
     @staticmethod
     def error(
         data: SendableJson = None,
-        status: int = 400,
+        status: int = status.HTTP_400_BAD_REQUEST,
         template_name: Any | None = None,
         headers: Any | None = None,
         exception: bool = False,

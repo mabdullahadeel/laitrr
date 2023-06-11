@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from os import path
 import environ
+from datetime import timedelta
+from auth.utils import AllowedAuthProviders
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -44,11 +46,19 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
     # third party apps
     "corsheaders",
     "rest_framework",
     "drf_spectacular",
     "django_extensions",
+    #
+    "dj_rest_auth",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    # "dj_rest_auth.registration",
+    "allauth.socialaccount.providers.google",
     # internal apps
     "users.apps.UsersConfig",
     "auth.apps.AuthConfig",
@@ -142,9 +152,34 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        # "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ),
 }
+
+REST_AUTH = {
+    "JWT_AUTH_REFRESH_COOKIE": "my-refresh-token",
+    "USE_JWT": True,
+    "SESSION_LOGIN": False,
+    "TOKEN_MODEL": None,
+}
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "APP": {
+            "client_id": env.str("GOOGLE_OAUTH2_KEY"),
+            "secret": env.str("GOOGLE_OAUTH2_SECRET"),
+            "key": "",
+            "scope": [
+                "openid",
+                "email",
+                "profile",
+            ],
+        },
+    },
+}
+
+SITE_ID = 1
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Laitrr API",
@@ -154,12 +189,16 @@ SPECTACULAR_SETTINGS = {
 
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
+    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=5),
 }
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://127.0.0.1:3000",
     "http://localhost:8000",
 ]
+
+CORS_ALLOW_CREDENTIALS = True
 
 AUTHENTICATION_BACKENDS = [
     "social_core.backends.google.GoogleOAuth2",
@@ -172,7 +211,5 @@ ALLOWED_REDIRECT_URLS = [
     "http://localhost:3000/auth/google/callback/",
 ]
 
-ALLOWED_AUTH_PROVIDERS = ["google-oauth2"]
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str("GOOGLE_OAUTH2_KEY")
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str("GOOGLE_OAUTH2_SECRET")
+ALLOWED_AUTH_PROVIDERS = AllowedAuthProviders.get_auth_providers()
