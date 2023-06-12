@@ -24,3 +24,8 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+
+    def save(self, *args, **kwargs):
+        if not self.username:
+            self.username = self.email.split("@")[0].replace(".", "_")
+        super().save(*args, **kwargs)

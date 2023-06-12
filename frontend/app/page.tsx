@@ -11,16 +11,6 @@ import { Button, buttonVariants } from "@/components/ui/button/button";
 import { useAccessTokenQuery } from "@/components/hooks/useAuthQuery";
 
 export default function IndexPage() {
-  // const res = await fetch(
-  //   "http://localhost:8000/auth/social?redirect_url=http://localhost:3000/auth/google/callback/&provider=google-oauth2",
-  //   {
-  //     next: {
-  //       revalidate: 0,
-  //     },
-  //   }
-  // )
-  // const data = await res.json()
-
   const query = useAccessTokenQuery();
   const testMutation = useMutation({
     mutationFn: async () => {
@@ -32,7 +22,7 @@ export default function IndexPage() {
   });
   const logout = useMutation({
     mutationFn: async () => {
-      await axiosPrivateInstance.post("test-auth/logout/");
+      await axiosPrivateInstance.post("auth/logout/");
     },
   });
 
