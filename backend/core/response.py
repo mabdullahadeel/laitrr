@@ -52,3 +52,23 @@ class Response:
             exception=exception,
             content_type=content_type,
         )
+
+    @staticmethod
+    def get_response_schema(schema: dict) -> dict:
+        return {
+            "type": "object",
+            "properties": {
+                "data": schema,
+                "status": {
+                    "type": "integer",
+                    "format": "int32",
+                },
+                "message": {
+                    "type": "string",
+                },
+                "error": {
+                    "type": "object",
+                    "nullable": True,
+                },
+            },
+        }

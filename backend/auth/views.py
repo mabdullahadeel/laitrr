@@ -7,8 +7,6 @@ from core.response import Response
 from dj_rest_auth.jwt_auth import CookieTokenRefreshSerializer
 from rest_framework.decorators import api_view
 from .utils import AllowedAuthProviders, GoogleOAuthUrl
-
-
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView

@@ -57,11 +57,11 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    # "dj_rest_auth.registration",
     "allauth.socialaccount.providers.google",
     # internal apps
     "users.apps.UsersConfig",
     "auth.apps.AuthConfig",
+    "events.apps.EventsConfig",
 ]
 
 
@@ -155,6 +155,7 @@ REST_FRAMEWORK = {
         # "rest_framework_simplejwt.authentication.JWTAuthentication",
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
 
 REST_AUTH = {
@@ -187,9 +188,16 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "0.0.1",
 }
 
+ONE_DAY = 60 * 60 * 24
+
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
-    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        minutes=5 if not DEBUG else ONE_DAY
+    ),  # TODO: Determine this value
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        days=1 if not DEBUG else 365
+    ),  # TODO: Determine this value
 }
 
 CORS_ALLOWED_ORIGINS = [
@@ -201,7 +209,6 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 AUTHENTICATION_BACKENDS = [
-    "social_core.backends.google.GoogleOAuth2",
     "django.contrib.auth.backends.ModelBackend",
 ]
 
@@ -213,3 +220,6 @@ ALLOWED_REDIRECT_URLS = [
 
 
 ALLOWED_AUTH_PROVIDERS = AllowedAuthProviders.get_auth_providers()
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str("GOOGLE_OAUTH2_KEY")
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str("GOOGLE_OAUTH2_SECRET")
