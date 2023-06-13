@@ -32,7 +32,7 @@ axiosPrivateInstance.interceptors.response.use(
   async (error) => {
     const previousRequest = error.config;
     if (error.response.status === 401 && !previousRequest._retry) {
-      const newToken = await axiosInstance.post("/test-auth/refresh/");
+      const newToken = await axiosInstance.post("/auth/refresh/");
       queryClient.setQueryData(["accessToken"], () => {
         return newToken.data.access;
       });

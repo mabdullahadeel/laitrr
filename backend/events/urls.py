@@ -16,4 +16,14 @@ urlpatterns = [
         views.EventAnnouncementCreate.as_view(),
         name="event-announcement-create",
     ),
+    path(
+        "<str:event_id>/update/",
+        views.EventUpdate.as_view(),
+        name="event-update",
+    ),
+    path(
+        "<uuid:event_id>/delete/",
+        views.EventDelete.as_view(),
+        name="event-delete",
+    ),
 ]
