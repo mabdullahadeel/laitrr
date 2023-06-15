@@ -1,6 +1,8 @@
 from django.db import models
 from core.db import generate_uuid
+
 from django.contrib.auth import get_user_model
+
 from users.models import User as CustomUser
 from django_stubs_ext.db.models import TypedModelMeta
 
@@ -68,3 +70,19 @@ class EventAnnouncement(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class EventAlertPreference(models.Model):
+    id = models.CharField(primary_key=True, max_length=36, default=generate_uuid)
+    event_types = models.ManyToManyField(to=EventType, related_name="event_alerts")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta(TypedModelMeta):
+        db_table = "event_alert_preferences"
+        verbose_name = "Event Alert Preference"
+        verbose_name_plural = "Event Alert Preferences"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.id
