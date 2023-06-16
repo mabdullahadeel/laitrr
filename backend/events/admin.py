@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import Event, EventAnnouncement, EventType
+from .models import (
+    Event,
+    EventAnnouncement,
+    EventType,
+    EventFollower,
+    EventAlertPreference,
+)
 
 
 class EventAnnouncementInline(admin.TabularInline):
@@ -29,3 +35,5 @@ class EventAdmin(admin.ModelAdmin):
 admin.site.register(Event, EventAdmin)
 admin.site.register(EventType)
 admin.site.register(EventAnnouncement)
+admin.site.register(EventFollower)
+admin.site.register(EventAlertPreference)
