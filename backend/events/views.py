@@ -1,7 +1,8 @@
 from core.mixins import WrappedResponseMixin
 from core.pagination import WrappedLimitOffsetPagination
 from rest_framework import generics
-from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework import status
+from rest_framework.response import Response
 
 from . import serializers as event_serializers
 from .models import Event, EventAnnouncement
@@ -24,17 +25,11 @@ class EventUpdate(WrappedResponseMixin, generics.UpdateAPIView):
 
 
 class EventDelete(WrappedResponseMixin, generics.DestroyAPIView):
-    def get_object(self):
-        return Event.objects.filter(id=self.kwargs["event_id"]).first()
-
-    def perform_destroy(self, instance: Event):
-        if instance is None:
-            raise NotFound({"event_id": "Event does not exist"})
-
-        if instance.owner != self.request.user:
-            raise PermissionDenied({"message": "User is not the owner of the event"})
-
-        instance.delete()
+    def destroy(self, request, *_, **kwargs):
+        success = Event.objects.delete_event(request, kwargs["event_id"])
+        if success:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class EventAnnouncementCreate(WrappedResponseMixin, generics.CreateAPIView):
