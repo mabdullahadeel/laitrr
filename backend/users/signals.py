@@ -10,4 +10,4 @@ def create_user_follow(sender, instance: UserFollow, created, **kwargs):
 
     from events.models import EventAlertPreference
 
-    EventAlertPreference.objects.create(user_follow=instance)
+    EventAlertPreference.objects.create(user_follow=instance, all_events=True)
