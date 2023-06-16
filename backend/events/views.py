@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from . import serializers as event_serializers
-from .models import Event, EventAnnouncement
+from .models import Event, EventAnnouncement, EventFollower
 
 
 class EventsList(WrappedResponseMixin, generics.ListAPIView):
@@ -41,3 +41,16 @@ class EventAnnouncementList(WrappedResponseMixin, generics.ListAPIView):
     serializer_class = event_serializers.EventAnnouncementSerializer
     queryset = EventAnnouncement.objects.all()
     pagination_class = WrappedLimitOffsetPagination
+
+
+class EventFollow(WrappedResponseMixin, generics.CreateAPIView):
+    serializer_class = event_serializers.FollowEventSerializer
+    queryset = EventFollower.objects.all()
+
+
+class EventUnfollow(WrappedResponseMixin, generics.DestroyAPIView):
+    queryset = EventFollower.objects.all()
+    lookup_field = "event_id"
+
+    def get_queryset(self):
+        return self.queryset.filter(follower=self.request.user)

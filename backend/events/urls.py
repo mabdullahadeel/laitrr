@@ -26,4 +26,14 @@ urlpatterns = [
         views.EventDelete.as_view(),
         name="event-delete",
     ),
+    path(
+        "follow/",
+        views.EventFollow.as_view(),
+        name="event-follow",
+    ),
+    path(
+        "<uuid:event_id>/unfollow/",
+        views.EventUnfollow.as_view(),
+        name="event-unfollow",
+    ),
 ]

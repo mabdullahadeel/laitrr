@@ -1,7 +1,13 @@
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 from users.serializers import UserPublicSerializer
-from .models import Event, EventAnnouncement, EventType
+from .models import (
+    Event,
+    EventAlertPreference,
+    EventAnnouncement,
+    EventType,
+    EventFollower,
+)
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -100,3 +106,32 @@ class EventAnnouncementCreateSerializer(serializers.ModelSerializer):
             raise PermissionDenied({"message": "User is not the owner of the event"})
 
         return super().create(validated_data)
+
+
+class FollowEventSerializer(serializers.Serializer):
+    event_id = serializers.CharField(max_length=36)
+
+    class Meta:
+        fields = ["event_id"]
+
+    def create(self, validated_data: dict):
+        user = self.context["request"].user
+        if EventFollower.objects.filter(
+            event_id=validated_data["event_id"], follower=user
+        ).exists():
+            raise serializers.ValidationError({"message": "User already following"})
+
+        if Event.objects.filter(id=validated_data["event_id"], owner=user).exists():
+            raise serializers.ValidationError(
+                {"message": "User cannot follow their own event"}
+            )
+
+        follow = EventFollower(follower=user, event_id=validated_data["event_id"])
+        # check if user is following the owner of the event
+        alert_preference = EventAlertPreference.objects.filter(
+            user_follow__user=follow.event.owner, user_follow__follower=user
+        )
+        if alert_preference.exists():
+            follow.alert_preference = alert_preference.first()
+        follow.save()
+        return follow
