@@ -1,5 +1,6 @@
 import axios from "axios";
 
+import { queryKeys } from "@/lib/constants/query-keys";
 import { queryClient } from "@/lib/query-client";
 
 const BASE_URL = "http://localhost:8000";
@@ -16,9 +17,12 @@ export const axiosPrivateInstance = axios.create({
 
 axiosPrivateInstance.interceptors.request.use(
   (config) => {
-    const accessToken = queryClient.getQueryData<any>(["accessToken"], {
-      exact: true,
-    });
+    const accessToken = queryClient.getQueryData<any>(
+      [queryKeys.AUTH_ACCESS_TOKEN],
+      {
+        exact: true,
+      }
+    );
     config.headers.Authorization = `Bearer ${accessToken || ""}`;
     return config;
   },
@@ -33,7 +37,7 @@ axiosPrivateInstance.interceptors.response.use(
     const previousRequest = error.config;
     if (error.response.status === 401 && !previousRequest._retry) {
       const newToken = await axiosInstance.post("/auth/refresh/");
-      queryClient.setQueryData(["accessToken"], () => {
+      queryClient.setQueryData([queryKeys.AUTH_ACCESS_TOKEN], () => {
         return newToken.data.access;
       });
       previousRequest.headers["Authorization"] =
