@@ -6,9 +6,9 @@ import { useAccessTokenQuery } from "@/components/hooks/useAuthQuery";
 
 export default function Page() {
   const params = useSearchParams();
-  const query = useAccessTokenQuery({
+  const query = {
     code: params.get("code"),
-  });
+  };
 
   return <div>Hello</div>;
 }

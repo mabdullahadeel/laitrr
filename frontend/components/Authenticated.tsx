@@ -27,7 +27,7 @@ export const Authenticated: React.FC<AuthenticatedProps> = ({ children }) => {
       return;
     }
     if (error) {
-      router.push(`/login?${createQueryString("next", pathname)}`);
+      router.push(`/login?${createQueryString("next", pathname!)}`);
     }
   }, [data, error, router, pathname, createQueryString]);
 
