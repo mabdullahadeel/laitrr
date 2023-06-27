@@ -1,7 +1,11 @@
 import axios from "axios";
 
+import { UserTokenResponse } from "@/types/api/auth.types";
+import { DestructuredResponse } from "@/types/api/common.types";
 import { queryKeys } from "@/lib/constants/query-keys";
 import { queryClient } from "@/lib/query-client";
+
+import { makeAuthRequest } from "./auth.request";
 
 const BASE_URL = "http://localhost:8000";
 
@@ -17,13 +21,12 @@ export const axiosPrivateInstance = axios.create({
 
 axiosPrivateInstance.interceptors.request.use(
   (config) => {
-    const accessToken = queryClient.getQueryData<any>(
-      [queryKeys.AUTH_ACCESS_TOKEN],
-      {
-        exact: true,
-      }
-    );
-    config.headers.Authorization = `Bearer ${accessToken || ""}`;
+    const userToken = queryClient.getQueryData<
+      DestructuredResponse<UserTokenResponse>
+    >([queryKeys.AUTH_ACCESS_TOKEN], {
+      exact: true,
+    });
+    config.headers.Authorization = `Bearer ${userToken?.access || ""}`;
     return config;
   },
   (error) => {
@@ -36,12 +39,15 @@ axiosPrivateInstance.interceptors.response.use(
   async (error) => {
     const previousRequest = error.config;
     if (error.response.status === 401 && !previousRequest._retry) {
-      const newToken = await axiosInstance.post("/auth/refresh/");
-      queryClient.setQueryData([queryKeys.AUTH_ACCESS_TOKEN], () => {
-        return newToken.data.access;
-      });
-      previousRequest.headers["Authorization"] =
-        "Bearer " + newToken.data.access;
+      const newSession = await makeAuthRequest.getSession();
+      queryClient.setQueryData(
+        [queryKeys.AUTH_ACCESS_TOKEN],
+        () => {
+          return newSession;
+        },
+        { updatedAt: Date.now() }
+      );
+      previousRequest.headers["Authorization"] = "Bearer " + newSession.access;
       previousRequest._retry = true;
       return axiosPrivateInstance(previousRequest);
     }

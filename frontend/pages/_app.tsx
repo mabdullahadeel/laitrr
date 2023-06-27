@@ -28,8 +28,8 @@ function LaitrrApp(props: MyAppProps) {
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
       </Head>
-      <RQQueryClientProvider>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <RQQueryClientProvider>
           <div
             className={cn(
               "bg-background min-h-screen font-sans antialiased",
@@ -43,8 +43,8 @@ function LaitrrApp(props: MyAppProps) {
             </div>
           </div>
           <TailwindIndicator />
-        </ThemeProvider>
-      </RQQueryClientProvider>
+        </RQQueryClientProvider>
+      </ThemeProvider>
     </>
   );
 }

@@ -4,3 +4,6 @@ export type StructuredResponse<T> = {
   message: string;
   error: any | null;
 };
+
+export type DestructuredResponse<T extends StructuredResponse<unknown>> =
+  T["data"];

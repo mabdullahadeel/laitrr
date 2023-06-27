@@ -52,8 +52,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_spectacular",
     "django_extensions",
-    #
     "dj_rest_auth",
+    "dj_rest_auth.registration",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
