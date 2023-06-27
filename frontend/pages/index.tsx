@@ -2,7 +2,7 @@ import React from "react";
 
 import { NextPageWithLayout } from "@/types/next.types";
 import { useSession } from "@/hooks/useSession";
-import { Authenticated } from "@/components/Authenticated";
+import { Authenticated } from "@/components/auth/Authenticated";
 
 const IndexPage: NextPageWithLayout = () => {
   const session = useSession();

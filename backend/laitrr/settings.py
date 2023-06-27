@@ -163,6 +163,7 @@ REST_AUTH = {
     "USE_JWT": True,
     "SESSION_LOGIN": False,
     "TOKEN_MODEL": None,
+    "USER_DETAILS_SERIALIZER": "users.serializers.UserPublicSerializer",
 }
 
 SOCIALACCOUNT_PROVIDERS = {

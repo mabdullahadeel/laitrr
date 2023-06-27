@@ -5,10 +5,12 @@ import { useAccessTokenQuery } from "@/queries/auth-queries";
 import { useMutation } from "@tanstack/react-query";
 
 import { NextPageWithLayout } from "@/types/next.types";
+import { useSession } from "@/hooks/useSession";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { AuthenticationRoute } from "@/components/auth/AuthenticationRoute";
 
 const LoginRoot: NextPageWithLayout = () => {
-  const query = useAccessTokenQuery();
+  const session = useSession();
   const testMutation = useMutation({
     mutationFn: async () => {
       const res = await axiosPrivateInstance.get(
@@ -52,7 +54,7 @@ const LoginRoot: NextPageWithLayout = () => {
       </div>
       <div>
         <pre>
-          <code>{JSON.stringify(query.data, null, 2)}</code>
+          <code>{JSON.stringify(session, null, 2)}</code>
         </pre>
         <Button
           onClick={() => {
@@ -71,6 +73,10 @@ const LoginRoot: NextPageWithLayout = () => {
       </div>
     </section>
   );
+};
+
+LoginRoot.getLayout = (page) => {
+  return <AuthenticationRoute>{page}</AuthenticationRoute>;
 };
 
 export default LoginRoot;

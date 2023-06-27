@@ -4,13 +4,19 @@ import React, { useCallback, useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAccessTokenQuery } from "@/queries/auth-queries";
 
+import { siteConfig } from "@/config/site";
+import { useSession } from "@/hooks/useSession";
+
 interface AuthenticatedProps extends React.PropsWithChildren {}
 
 export const Authenticated: React.FC<AuthenticatedProps> = ({ children }) => {
-  const { error, data, status } = useAccessTokenQuery();
+  const session = useSession();
+  const { error, data } = useAccessTokenQuery({
+    enabled: typeof session === "undefined",
+  });
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams()!;
+  const searchParams = useSearchParams();
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -23,6 +29,13 @@ export const Authenticated: React.FC<AuthenticatedProps> = ({ children }) => {
   );
 
   useEffect(() => {
+    if (session) {
+      router.push(searchParams?.get(siteConfig.redirectKey) || "/");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
+
+  useEffect(() => {
     if (data) {
       return;
     }
@@ -31,7 +44,7 @@ export const Authenticated: React.FC<AuthenticatedProps> = ({ children }) => {
     }
   }, [data, error, router, pathname, createQueryString]);
 
-  if (status !== "success") {
+  if (data === undefined) {
     return <div>Loading...</div>;
   }
 
