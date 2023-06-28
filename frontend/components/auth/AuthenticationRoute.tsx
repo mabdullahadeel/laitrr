@@ -12,7 +12,7 @@ interface AuthenticationRouteProps extends React.PropsWithChildren {}
 export const AuthenticationRoute: React.FC<AuthenticationRouteProps> = ({
   children,
 }) => {
-  const session = useSession();
+  const { session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
 
