@@ -1,3 +1,4 @@
 export const queryKeys = {
-  AUTH_ACCESS_TOKEN: "accessToken",
+  USER_SESSION: "userSession",
+  OAUTH_SIGN_IN: "oauthSignIn",
 };

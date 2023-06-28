@@ -1,3 +1,4 @@
+import Router from "next/router";
 import axios from "axios";
 
 import { UserTokenResponse } from "@/types/api/auth.types";
@@ -23,7 +24,7 @@ axiosPrivateInstance.interceptors.request.use(
   (config) => {
     const userToken = queryClient.getQueryData<
       DestructuredResponse<UserTokenResponse>
-    >([queryKeys.AUTH_ACCESS_TOKEN], {
+    >([queryKeys.USER_SESSION], {
       exact: true,
     });
     config.headers.Authorization = `Bearer ${userToken?.access || ""}`;
@@ -39,15 +40,17 @@ axiosPrivateInstance.interceptors.response.use(
   async (error) => {
     const previousRequest = error.config;
     if (error.response.status === 401 && !previousRequest._retry) {
-      const newSession = await makeAuthRequest.getSession();
-      queryClient.setQueryData(
-        [queryKeys.AUTH_ACCESS_TOKEN],
-        () => {
-          return newSession;
-        },
-        { updatedAt: Date.now() }
-      );
-      previousRequest.headers["Authorization"] = "Bearer " + newSession.access;
+      await queryClient.refetchQueries({
+        queryKey: [queryKeys.USER_SESSION],
+        exact: true,
+      });
+      const freshSessionQuery = queryClient.getQueryData<
+        DestructuredResponse<UserTokenResponse>
+      >([queryKeys.USER_SESSION], {
+        exact: true,
+      });
+      previousRequest.headers["Authorization"] =
+        "Bearer " + freshSessionQuery?.access;
       previousRequest._retry = true;
       return axiosPrivateInstance(previousRequest);
     }

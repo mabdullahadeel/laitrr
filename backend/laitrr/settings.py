@@ -159,11 +159,13 @@ REST_FRAMEWORK = {
 }
 
 REST_AUTH = {
-    "JWT_AUTH_REFRESH_COOKIE": "my-refresh-token",
+    "JWT_AUTH_REFRESH_COOKIE": "laitrr-refresh",
     "USE_JWT": True,
     "SESSION_LOGIN": False,
     "TOKEN_MODEL": None,
     "USER_DETAILS_SERIALIZER": "users.serializers.UserPublicSerializer",
+    "JWT_AUTH_REFRESH_COOKIE_PATH": "/auth/refresh/",
+    "JWT_AUTH_SECURE": False if DEBUG else True,
 }
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -193,12 +195,14 @@ ONE_DAY = 60 * 60 * 24
 
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
-    "ACCESS_TOKEN_LIFETIME": timedelta(
-        minutes=5 if not DEBUG else ONE_DAY
-    ),  # TODO: Determine this value
-    "REFRESH_TOKEN_LIFETIME": timedelta(
-        days=1 if not DEBUG else 365
-    ),  # TODO: Determine this value
+    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(seconds=10),
+    # "ACCESS_TOKEN_LIFETIME": timedelta(
+    #     minutes=5 if not DEBUG else ONE_DAY
+    # ),  # TODO: Determine this value
+    # "REFRESH_TOKEN_LIFETIME": timedelta(
+    #     days=1 if not DEBUG else 365
+    # ),  # TODO: Determine this value
 }
 
 CORS_ALLOWED_ORIGINS = [

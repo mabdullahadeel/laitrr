@@ -1,30 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { axiosPrivateInstance } from "@/api/axios";
-import { useAccessTokenQuery } from "@/queries/auth-queries";
-import { useMutation } from "@tanstack/react-query";
 
 import { NextPageWithLayout } from "@/types/next.types";
-import { useSession } from "@/hooks/useSession";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { AuthenticationRoute } from "@/components/auth/AuthenticationRoute";
 
 const LoginRoot: NextPageWithLayout = () => {
-  const session = useSession();
-  const testMutation = useMutation({
-    mutationFn: async () => {
-      const res = await axiosPrivateInstance.get(
-        "auth/social?redirect_url=http://localhost:3000/auth/google/callback/&provider=google-oauth2"
-      );
-      return res.data;
-    },
-  });
-  const logout = useMutation({
-    mutationFn: async () => {
-      await axiosPrivateInstance.post("auth/logout/");
-    },
-  });
-
   const [url, setUrl] = useState("");
   useEffect(() => {
     fetch(
@@ -52,25 +33,7 @@ const LoginRoot: NextPageWithLayout = () => {
           Login With Google
         </Link>
       </div>
-      <div>
-        <pre>
-          <code>{JSON.stringify(session, null, 2)}</code>
-        </pre>
-        <Button
-          onClick={() => {
-            testMutation.mutate();
-          }}
-        >
-          Test
-        </Button>
-        <Button
-          onClick={() => {
-            logout.mutate();
-          }}
-        >
-          Logout
-        </Button>
-      </div>
+      <div></div>
     </section>
   );
 };

@@ -10,13 +10,26 @@ type AccessTokenQueryProps = {
 export const useAccessTokenQuery = (opts: AccessTokenQueryProps = {}) => {
   const { enabled = true } = opts;
   const query = useQuery({
-    queryKey: [queryKeys.AUTH_ACCESS_TOKEN],
+    queryKey: [queryKeys.USER_SESSION],
     queryFn: makeAuthRequest.getSession,
-    staleTime: 1000 * 60 * 4, // 4 minutes,
-    cacheTime: Infinity,
+    staleTime: Infinity,
     retry: 1,
     enabled,
   });
 
+  return query;
+};
+
+type OAuthSignInProps = {
+  code: string;
+  state?: string;
+};
+
+export const useOAuthSignIn = (opts: OAuthSignInProps) => {
+  const query = useQuery({
+    queryKey: [queryKeys.OAUTH_SIGN_IN],
+    queryFn: () => makeAuthRequest.signInWithGoogle(opts.code),
+    enabled: !!opts.code,
+  });
   return query;
 };
