@@ -1,12 +1,9 @@
-import Router from "next/router";
 import axios from "axios";
 
 import { UserTokenResponse } from "@/types/api/auth.types";
 import { DestructuredResponse } from "@/types/api/common.types";
 import { queryKeys } from "@/lib/constants/query-keys";
 import { queryClient } from "@/lib/query-client";
-
-import { makeAuthRequest } from "./auth.request";
 
 const BASE_URL = "http://localhost:8000";
 
