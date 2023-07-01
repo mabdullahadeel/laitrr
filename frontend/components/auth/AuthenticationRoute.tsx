@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { siteConfig } from "@/config/site";
 import { useSession } from "@/hooks/useSession";

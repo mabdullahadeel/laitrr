@@ -1,10 +1,10 @@
+"use client";
+
 import React, { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useOAuthSignIn } from "@/queries/auth-queries";
 
-import { NextPageWithLayout } from "@/types/next.types";
-
-const GoogleCallbackPage: NextPageWithLayout = () => {
+const GoogleCallbackPage = () => {
   const params = useSearchParams()!;
   const router = useRouter();
   const payload = {
