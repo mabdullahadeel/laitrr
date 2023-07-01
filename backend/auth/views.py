@@ -43,6 +43,7 @@ class SocialAuthView(APIView):
 
         if provider == AllowedAuthProviders.GOOGLE_OAUTH2:
             url = GoogleOAuthUrl().get_auth_url(serializer)
+            print("url", url)
             return Response.success(data={"authorization_url": url})
 
         return Response.error(error="Invalid payload")
@@ -77,3 +78,8 @@ def refresh_token(request):
     d["user"] = serializer.data
 
     return Response.success(data=d)
+
+
+@api_view(["GET"])
+def test_view(request):
+    return Response.success(data={"message": "Hello World!"})

@@ -9,15 +9,14 @@ type AccessTokenQueryProps = {
 
 export const useAccessTokenQuery = (opts: AccessTokenQueryProps = {}) => {
   const { enabled = true } = opts;
-  const query = useQuery({
+  return useQuery({
     queryKey: [queryKeys.USER_SESSION],
     queryFn: makeAuthRequest.getSession,
     staleTime: Infinity,
     retry: 1,
     enabled,
+    notifyOnChangeProps: ["isError", "isSuccess", "isLoading"],
   });
-
-  return query;
 };
 
 type OAuthSignInProps = {

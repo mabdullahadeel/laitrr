@@ -1,24 +1,24 @@
 import { UserTokenResponse } from "@/types/api/auth.types";
 import { DestructuredResponse } from "@/types/api/common.types";
 
-import { axiosInstance } from "./axios";
+import { httpClient, privateHttpClient } from "./httpClient";
 
-const basePath = "/auth";
+const basePath = "auth";
 
 export const makeAuthRequest = {
   getSession: async () => {
-    const res = await axiosInstance.post<UserTokenResponse>(
-      `${basePath}/refresh/`
-    );
-    return res.data.data;
+    const res = await httpClient
+      .post(`${basePath}/refresh/`)
+      .json<UserTokenResponse>();
+    return res.data;
   },
   logout: async () => {
-    await axiosInstance.post(`${basePath}/logout/`);
+    await privateHttpClient.post(`${basePath}/logout/`).json();
   },
   signInWithGoogle: async (code: string) => {
-    const res = await axiosInstance.post<
-      DestructuredResponse<UserTokenResponse>
-    >(`${basePath}/google/`, { code });
-    return res.data;
+    const res = await httpClient
+      .post(`${basePath}/google/`, { json: { code } })
+      .json<DestructuredResponse<UserTokenResponse>>();
+    return res;
   },
 };

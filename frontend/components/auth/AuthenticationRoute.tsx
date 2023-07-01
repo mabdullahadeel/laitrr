@@ -2,24 +2,24 @@
 
 import React, { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useAccessTokenQuery } from "@/queries/auth-queries";
 
 import { siteConfig } from "@/config/site";
-import { useSession } from "@/hooks/useSession";
 
 interface AuthenticationRouteProps extends React.PropsWithChildren {}
 
 export const AuthenticationRoute: React.FC<AuthenticationRouteProps> = ({
   children,
 }) => {
-  const { session } = useSession();
+  const { data } = useAccessTokenQuery();
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (session) {
+    if (data) {
       router.push(searchParams?.get(siteConfig.redirectKey) || "/");
     }
-  }, [session, router, searchParams]);
+  }, [data, router, searchParams]);
 
   return <>{children}</>;
 };

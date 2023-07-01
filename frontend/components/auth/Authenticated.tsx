@@ -5,13 +5,11 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAccessTokenQuery } from "@/queries/auth-queries";
 
 import { siteConfig } from "@/config/site";
-import { useSession } from "@/hooks/useSession";
 
 interface AuthenticatedProps extends React.PropsWithChildren {}
 
 export const Authenticated: React.FC<AuthenticatedProps> = ({ children }) => {
-  const session = useSession();
-  const { error, data } = useAccessTokenQuery();
+  const { isError, isSuccess, isLoading } = useAccessTokenQuery();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -27,22 +25,22 @@ export const Authenticated: React.FC<AuthenticatedProps> = ({ children }) => {
   );
 
   useEffect(() => {
-    if (session) {
+    if (isSuccess) {
       router.push(searchParams?.get(siteConfig.redirectKey) || "/");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session]);
+  }, [isSuccess]);
 
   useEffect(() => {
-    if (data) {
+    if (isLoading) {
       return;
     }
-    if (error) {
+    if (isError) {
       router.push(`/login?${createQueryString("next", pathname!)}`);
     }
-  }, [data, error, router, pathname, createQueryString]);
+  }, [isLoading, isError, router, pathname, createQueryString]);
 
-  if (data === undefined) {
+  if (isLoading || !isSuccess || isError) {
     return <div>Loading...</div>;
   }
 

@@ -1,28 +1,31 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { httpClient } from "@/api/httpClient";
 
+import { StructuredResponse } from "@/types/api/common.types";
 import { buttonVariants } from "@/components/ui/button";
 import { AuthenticationRoute } from "@/components/auth/AuthenticationRoute";
 
-const LoginRoot = () => {
-  const [url, setUrl] = useState("");
-  useEffect(() => {
-    fetch(
-      "http://127.0.0.1:8000/auth/social?redirect_url=http://localhost:3000/auth/google/callback/&provider=google-oauth2"
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        const url = new URL(data.data.authorization_url);
-        const state = { backTo: "/" };
-        url.searchParams.append("state", JSON.stringify(state));
-        setUrl(url.toString());
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+export const revalidate = 60 * 60;
+
+const getGoogleUrl = async () => {
+  try {
+    const data = await httpClient
+      .get(
+        "auth/social/?redirect_url=http://localhost:3000/auth/google/callback/&provider=google-oauth2"
+      )
+      .json<StructuredResponse<{ authorization_url: string }>>();
+    const url = new URL(data.data.authorization_url);
+    const state = { backTo: "/" };
+    url.searchParams.append("state", JSON.stringify(state));
+    return url.toString();
+  } catch (error) {
+    console.log("error", error);
+    return "";
+  }
+};
+
+export default async function LoginRoot() {
+  const url = await getGoogleUrl();
 
   return (
     <AuthenticationRoute>
@@ -38,6 +41,4 @@ const LoginRoot = () => {
       </section>
     </AuthenticationRoute>
   );
-};
-
-export default LoginRoot;
+}
