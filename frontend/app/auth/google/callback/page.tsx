@@ -1,14 +1,26 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import React, { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useOAuthSignIn } from "@/queries/auth-queries";
 
-import { useAccessTokenQuery } from "@/components/hooks/useAuthQuery";
+const GoogleCallbackPage = () => {
+  const params = useSearchParams()!;
+  const router = useRouter();
+  const payload = {
+    code: params.get("code")!,
+    state: params.get("state")!,
+  };
+  const query = useOAuthSignIn(payload);
 
-export default function Page() {
-  const params = useSearchParams();
-  const query = useAccessTokenQuery({
-    code: params.get("code"),
-  });
+  useEffect(() => {
+    if (query.data) {
+      const state = JSON.parse(payload.state!);
+      router.push(state.backTo ?? "/");
+    }
+  }, [query.data, payload.state, router]);
 
-  return <div>Hello</div>;
-}
+  return <div>Google</div>;
+};
+
+export default GoogleCallbackPage;
