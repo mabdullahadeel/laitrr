@@ -3,7 +3,6 @@ import { httpClient } from "@/api/httpClient";
 
 import { StructuredResponse } from "@/types/api/common.types";
 import { buttonVariants } from "@/components/ui/button";
-import { AuthenticationRoute } from "@/components/auth/AuthenticationRoute";
 
 export const revalidate = 60 * 60;
 
@@ -28,17 +27,15 @@ export default async function LoginRoot() {
   const url = await getGoogleUrl();
 
   return (
-    <AuthenticationRoute>
-      <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
-        <div className="flex gap-4">
-          <Link
-            href={url}
-            className={buttonVariants({ className: "bg-red-500 text-white" })}
-          >
-            Login With Google
-          </Link>
-        </div>
-      </section>
-    </AuthenticationRoute>
+    <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
+      <div className="flex gap-4">
+        <Link
+          href={url}
+          className={buttonVariants({ className: "bg-red-500 text-white" })}
+        >
+          Login With Google
+        </Link>
+      </div>
+    </section>
   );
 }
