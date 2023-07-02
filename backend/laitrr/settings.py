@@ -195,14 +195,12 @@ ONE_DAY = 60 * 60 * 24
 
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
-    # "ACCESS_TOKEN_LIFETIME": timedelta(
-    #     minutes=5 if not DEBUG else ONE_DAY
-    # ),  # TODO: Determine this value
-    # "REFRESH_TOKEN_LIFETIME": timedelta(
-    #     days=1 if not DEBUG else 365
-    # ),  # TODO: Determine this value
-    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=10),
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        minutes=5 if not DEBUG else ONE_DAY * 7
+    ),  # TODO: Determine this value
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        days=1 if not DEBUG else 365
+    ),  # TODO: Determine this value
 }
 
 CORS_ALLOWED_ORIGINS = [

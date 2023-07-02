@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { httpClient } from "@/api/httpClient";
 
-import { StructuredResponse } from "@/types/api/common.types";
+import { StructuredResponse } from "@/types/api/common";
 import { buttonVariants } from "@/components/ui/button";
 
 export const revalidate = 60 * 60;

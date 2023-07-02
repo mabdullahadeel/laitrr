@@ -1,5 +1,5 @@
-import { UserTokenResponse } from "@/types/api/auth.types";
-import { DestructuredResponse } from "@/types/api/common.types";
+import { UserTokenResponse } from "@/types/api/auth";
+import { DestructuredResponse } from "@/types/api/common";
 
 import { httpClient, privateHttpClient } from "./httpClient";
 
