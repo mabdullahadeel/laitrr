@@ -6,7 +6,7 @@ from drf_spectacular.utils import extend_schema
 from core.response import Response
 from jwt import decode
 from rest_framework_simplejwt.settings import api_settings as simplejwt_settings
-from dj_rest_auth.jwt_auth import CookieTokenRefreshSerializer
+from dj_rest_auth.jwt_auth import CookieTokenRefreshSerializer, set_jwt_access_cookie
 from rest_framework.decorators import api_view, permission_classes
 
 from users.models import User
@@ -77,7 +77,9 @@ def refresh_token(request):
     serializer = UserPublicSerializer(user)
     d["user"] = serializer.data
 
-    return Response.success(data=d)
+    response = Response.success(data=d)
+    set_jwt_access_cookie(response, d.get("access", None))
+    return response
 
 
 @api_view(["GET"])

@@ -159,6 +159,7 @@ REST_FRAMEWORK = {
 
 REST_AUTH = {
     "JWT_AUTH_REFRESH_COOKIE": "laitrr-refresh",
+    "JWT_AUTH_COOKIE": "laitrr-access",
     "USE_JWT": True,
     "SESSION_LOGIN": False,
     "TOKEN_MODEL": None,

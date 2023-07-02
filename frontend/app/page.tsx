@@ -2,6 +2,7 @@
 
 import React from "react";
 import { privateHttpClient } from "@/api/httpClient";
+import { PlainLayout } from "@/layouts/plain";
 import { useLogoutMutation } from "@/queries/auth-mutations";
 import { useMutation } from "@tanstack/react-query";
 
@@ -18,21 +19,26 @@ const IndexPage = () => {
 
   return (
     <Authenticated>
-      <div className="flex h-screen w-full flex-col items-center justify-center gap-2">
-        <h1>Logged in as {session?.user.email}</h1>
-        {session && (
-          <Button variant="destructive" onClick={() => logoutMutation.mutate()}>
-            Logout
+      <PlainLayout>
+        <div className="flex h-screen w-full flex-col items-center justify-center gap-2">
+          <h1>Logged in as {session?.user.email}</h1>
+          {session && (
+            <Button
+              variant="destructive"
+              onClick={() => logoutMutation.mutate()}
+            >
+              Logout
+            </Button>
+          )}
+          <Button
+            onClick={() => {
+              testMutation.mutate();
+            }}
+          >
+            Test
           </Button>
-        )}
-        <Button
-          onClick={() => {
-            testMutation.mutate();
-          }}
-        >
-          Test
-        </Button>
-      </div>
+        </div>
+      </PlainLayout>
     </Authenticated>
   );
 };

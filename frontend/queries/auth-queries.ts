@@ -16,6 +16,7 @@ export const useAccessTokenQuery = (opts: AccessTokenQueryProps = {}) => {
     retry: 1,
     enabled,
     notifyOnChangeProps: ["isError", "isSuccess", "isLoading"],
+    retryOnMount: false,
   });
 };
 
