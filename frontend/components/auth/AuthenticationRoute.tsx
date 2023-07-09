@@ -11,15 +11,15 @@ interface AuthenticationRouteProps extends React.PropsWithChildren {}
 export const AuthenticationRoute: React.FC<AuthenticationRouteProps> = ({
   children,
 }) => {
-  const { data } = useAccessTokenQuery();
+  const { isSuccess } = useAccessTokenQuery();
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (data) {
+    if (isSuccess) {
       router.push(searchParams?.get(siteConfig.redirectKey) || "/");
     }
-  }, [data, router, searchParams]);
+  }, [isSuccess, router, searchParams]);
 
   return <>{children}</>;
 };

@@ -1,5 +1,5 @@
-import { StructuredResponse } from "./common.types";
-import { PublicUser } from "./user.types";
+import { StructuredResponse } from "./common";
+import { PublicUser } from "./user";
 
 export type UserTokenResponse = StructuredResponse<{
   access: string;

@@ -1,7 +1,5 @@
 import ky, { HTTPError } from "ky";
 
-import { UserTokenResponse } from "@/types/api/auth.types";
-import { DestructuredResponse } from "@/types/api/common.types";
 import { queryKeys } from "@/lib/constants/query-keys";
 import { queryClient } from "@/lib/query-client";
 
@@ -26,21 +24,8 @@ export const privateHttpClient = ky.extend({
   prefixUrl: BASE_URL,
   credentials: "include",
   hooks: {
-    beforeRequest: [
-      async (request) => {
-        const userToken = queryClient.getQueryData<
-          DestructuredResponse<UserTokenResponse>
-        >([queryKeys.USER_SESSION], {
-          exact: true,
-        });
-        request.headers.set(
-          "Authorization",
-          `Bearer ${userToken?.access || ""}`
-        );
-      },
-    ],
     beforeRetry: [
-      async ({ request, error, retryCount }) => {
+      async ({ error, retryCount }) => {
         if (error instanceof HTTPError && error.response.status === 401) {
           if (retryCount === 1) {
             try {
@@ -57,15 +42,6 @@ export const privateHttpClient = ky.extend({
               redirectToLogin();
               return ky.stop;
             }
-            const freshSessionQuery = queryClient.getQueryData<
-              DestructuredResponse<UserTokenResponse>
-            >([queryKeys.USER_SESSION], {
-              exact: true,
-            });
-            request.headers.set(
-              "Authorization",
-              "Bearer " + freshSessionQuery?.access
-            );
           } else {
             redirectToLogin();
             return ky.stop;
