@@ -119,7 +119,7 @@ class EventFollower(models.Model):
         verbose_name_plural = "Event Followers"
 
     def __str__(self):
-        return f"{self.follower} ----> {self.event}"
+        return f"{self.follower} --> {self.event}"
 
 
 class EventAlertPreference(models.Model):

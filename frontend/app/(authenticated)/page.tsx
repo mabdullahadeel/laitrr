@@ -1,10 +1,13 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { makeEventsRequest } from "@/api/events.request";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 import { queryKeys } from "@/lib/constants/query-keys";
+import { buttonVariants } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 const IndexPage = () => {
   const { data, status } = useInfiniteQuery({
@@ -35,20 +38,22 @@ const IndexPage = () => {
   }
 
   return (
-    <div className="container">
-      <h1 className="mb-5 text-center text-4xl font-bold text-green-400 md:text-slate-400">
-        Events Feed
-      </h1>
-      <div className="container w-full">
-        {data?.pages.map((page) =>
-          page.results.map((event) => (
-            <div key={event.id}>
-              <h2 className="text-2xl font-bold">{event.title}</h2>
-              <p className="text-lg">{event.description}</p>
-            </div>
-          ))
-        )}
-      </div>
+    <div className="container w-full mt-4">
+      {data?.pages.map((page) =>
+        page.results.map((event) => (
+          <Card key={event.id} className="mt-2 pt-2">
+            <CardContent className="p-2 px-4 flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold">{event.title}</h2>
+                <p className="text-lg">{event.description}</p>
+              </div>
+              <Link className={buttonVariants()} href={`/events/${event.id}`}>
+                View
+              </Link>
+            </CardContent>
+          </Card>
+        ))
+      )}
     </div>
   );
 };

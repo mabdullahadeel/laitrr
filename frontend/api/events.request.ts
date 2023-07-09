@@ -1,5 +1,8 @@
 import { PaginatedResponse } from "@/types/api/common";
-import { EventListResponseItem } from "@/types/api/event";
+import {
+  TEventDetailsResponse,
+  TEventListResponseItem,
+} from "@/types/api/event";
 
 import { privateHttpClient } from "./httpClient";
 
@@ -17,7 +20,13 @@ export const makeEventsRequest = {
   ) => {
     const res = await privateHttpClient
       .get(`${basePath}/`, { searchParams: { limit, offset } })
-      .json<PaginatedResponse<EventListResponseItem>>();
+      .json<PaginatedResponse<TEventListResponseItem>>();
+    return res.data;
+  },
+  getEventDetails: async (eventId: string) => {
+    const res = await privateHttpClient
+      .get(`${basePath}/${eventId}/`)
+      .json<TEventDetailsResponse>();
     return res.data;
   },
 };
