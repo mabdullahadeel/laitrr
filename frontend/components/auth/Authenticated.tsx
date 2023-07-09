@@ -25,8 +25,9 @@ export const Authenticated: React.FC<AuthenticatedProps> = ({ children }) => {
   );
 
   useEffect(() => {
-    if (isSuccess) {
-      router.push(searchParams?.get(siteConfig.redirectKey) || "/");
+    const redirectKey = searchParams?.get(siteConfig.redirectKey);
+    if (isSuccess && redirectKey) {
+      router.push(redirectKey || "/");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess]);

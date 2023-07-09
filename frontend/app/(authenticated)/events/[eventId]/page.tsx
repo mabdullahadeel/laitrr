@@ -24,7 +24,7 @@ export default function Page({ params }: { params: { eventId: string } }) {
   }
 
   return (
-    <div className="container w-full mt-4">
+    <div className="md:container w-full mt-4">
       <h1 className="text-2xl font-bold">{query.data.title}</h1>
       <p className="text-lg">{query.data.description}</p>
     </div>

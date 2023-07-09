@@ -6,10 +6,10 @@ export default function Layout(props: React.PropsWithChildren) {
   return (
     <Authenticated>
       <SiteHeader />
-      <div className="container flex">
+      <main className="md:container w-full px-3 md:px-0 flex min-h-[93vh]">
         <Sidebar />
-        {props.children}
-      </div>
+        <main className="w-full md:container">{props.children}</main>
+      </main>
     </Authenticated>
   );
 }

@@ -38,10 +38,10 @@ const IndexPage = () => {
   }
 
   return (
-    <div className="container w-full mt-4">
+    <div className="md:container w-full mt-4">
       {data?.pages.map((page) =>
         page.results.map((event) => (
-          <Card key={event.id} className="mt-2 pt-2">
+          <Card key={event.id} className="mt-2 pt-2 w-full">
             <CardContent className="p-2 px-4 flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold">{event.title}</h2>
