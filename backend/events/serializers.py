@@ -31,6 +31,28 @@ class EventSerializer(serializers.ModelSerializer):
         ]
 
 
+class EventDetailsSerializer(serializers.ModelSerializer):
+    owner = UserPublicSerializer()
+    user_following_event = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Event
+        fields = [
+            "id",
+            "title",
+            "description",
+            "owner",
+            "created_at",
+            "updated_at",
+            "user_following_event",
+        ]
+        depth = 1
+
+    def get_user_following_event(self, obj):
+        user = self.context["request"].user
+        return EventFollower.objects.filter(event=obj, follower=user).exists()
+
+
 class EventCreateSerializer(serializers.ModelSerializer):
     type = serializers.PrimaryKeyRelatedField(
         required=False,

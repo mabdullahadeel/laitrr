@@ -7,7 +7,11 @@ from .models import Event, EventFollower
 
 @receiver(post_save, sender=Event)
 def create_event_follower(sender, instance: Event, created, **kwargs):
-    print("create_event_follower")
+    """Summary
+    When an event is created, create event followers for the owner's followers
+    By default, all the followers of the owner will follow the event based
+    on their preferences.
+    """
     if not created:
         return
 

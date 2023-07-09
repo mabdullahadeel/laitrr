@@ -14,6 +14,20 @@ class EventsList(WrappedResponseMixin, generics.ListAPIView):
     pagination_class = WrappedLimitOffsetPagination
 
 
+class EventDetail(WrappedResponseMixin, generics.RetrieveAPIView):
+    serializer_class = event_serializers.EventDetailsSerializer
+    queryset = Event.objects.all()
+
+    def get_object(self):
+        return Event.objects.get(id=self.kwargs["event_id"])
+
+    def handle_exception(self, exc):
+        if isinstance(exc, Event.DoesNotExist):
+            return Response(
+                data={"message": "Event not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+
+
 class EventCreate(WrappedResponseMixin, generics.CreateAPIView):
     serializer_class = event_serializers.EventCreateSerializer
     queryset = Event.objects.all()

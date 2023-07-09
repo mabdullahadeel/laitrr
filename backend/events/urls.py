@@ -7,17 +7,17 @@ urlpatterns = [
     path("", views.EventsList.as_view(), name="events-list"),
     path("create/", views.EventCreate.as_view(), name="event-create"),
     path(
-        "<str:event_id>/announcements/",
+        "<uuid:event_id>/announcements/",
         views.EventAnnouncementList.as_view(),
         name="event-announcements-list",
     ),
     path(
-        "<str:event_id>/announcements/create/",
+        "<uuid:event_id>/announcements/create/",
         views.EventAnnouncementCreate.as_view(),
         name="event-announcement-create",
     ),
     path(
-        "<str:event_id>/update/",
+        "<uuid:event_id>/update/",
         views.EventUpdate.as_view(),
         name="event-update",
     ),
@@ -35,5 +35,10 @@ urlpatterns = [
         "<uuid:event_id>/unfollow/",
         views.EventUnfollow.as_view(),
         name="event-unfollow",
+    ),
+    path(
+        "<uuid:event_id>/",
+        views.EventDetail.as_view(),
+        name="event-detail",
     ),
 ]
