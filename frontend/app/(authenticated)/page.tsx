@@ -36,10 +36,10 @@ const IndexPage = () => {
 
   return (
     <div className="container">
-      <h1 className="mb-5 text-center text-4xl font-bold text-slate-400">
+      <h1 className="mb-5 text-center text-4xl font-bold text-green-400 md:text-slate-400">
         Events Feed
       </h1>
-      <div className="w-full container">
+      <div className="container w-full">
         {data?.pages.map((page) =>
           page.results.map((event) => (
             <div key={event.id}>
