@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from . import serializers as event_serializers
-from .models import Event, EventAnnouncement, EventFollower
+from .models import Event, EventAnnouncement, EventFollower, EventType
 
 
 class EventsList(WrappedResponseMixin, generics.ListAPIView):
@@ -68,3 +68,8 @@ class EventUnfollow(WrappedResponseMixin, generics.DestroyAPIView):
 
     def get_queryset(self):
         return self.queryset.filter(follower=self.request.user)
+
+
+class EventTypeList(WrappedResponseMixin, generics.ListAPIView):
+    serializer_class = event_serializers.ListEventTypesSerializer
+    queryset = EventType.objects.all()

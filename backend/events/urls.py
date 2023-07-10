@@ -16,29 +16,14 @@ urlpatterns = [
         views.EventAnnouncementCreate.as_view(),
         name="event-announcement-create",
     ),
-    path(
-        "<uuid:event_id>/update/",
-        views.EventUpdate.as_view(),
-        name="event-update",
-    ),
-    path(
-        "<uuid:event_id>/delete/",
-        views.EventDelete.as_view(),
-        name="event-delete",
-    ),
-    path(
-        "follow/",
-        views.EventFollow.as_view(),
-        name="event-follow",
-    ),
+    path("<uuid:event_id>/update/", views.EventUpdate.as_view(), name="event-update"),
+    path("<uuid:event_id>/delete/", views.EventDelete.as_view(), name="event-delete"),
+    path("follow/", views.EventFollow.as_view(), name="event-follow"),
     path(
         "<uuid:event_id>/unfollow/",
         views.EventUnfollow.as_view(),
         name="event-unfollow",
     ),
-    path(
-        "<uuid:event_id>/",
-        views.EventDetail.as_view(),
-        name="event-detail",
-    ),
+    path("<uuid:event_id>/", views.EventDetail.as_view(), name="event-detail"),
+    path("event-types/", views.EventTypeList.as_view(), name="event-types-list"),
 ]

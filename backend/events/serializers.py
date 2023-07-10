@@ -157,3 +157,9 @@ class FollowEventSerializer(serializers.Serializer):
             follow.alert_preference = alert_preference.first()
         follow.save()
         return follow
+
+
+class ListEventTypesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EventType
+        fields = "__all__"
