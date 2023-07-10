@@ -59,6 +59,8 @@ class Event(models.Model):
         on_delete=models.SET_DEFAULT,
         default=EventType.default_event_type,
     )
+    resource_url = models.URLField(null=True, blank=True)
+    start_date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
