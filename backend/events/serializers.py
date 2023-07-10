@@ -15,14 +15,7 @@ class EventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = [
-            "id",
-            "title",
-            "description",
-            "owner",
-            "created_at",
-            "updated_at",
-        ]
+        fields = "__all__"
         read_only_fields = [
             "id",
             "owner",
@@ -37,15 +30,7 @@ class EventDetailsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = [
-            "id",
-            "title",
-            "description",
-            "owner",
-            "created_at",
-            "updated_at",
-            "user_following_event",
-        ]
+        fields = "__all__"
         depth = 1
 
     def get_user_following_event(self, obj):
@@ -64,16 +49,8 @@ class EventCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = [
-            "id",
-            "title",
-            "description",
-            "type",
-            "owner",
-            "created_at",
-            "updated_at",
-        ]
-        read_only_fields = ["id"]
+        fields = "__all__"
+        read_only_fields = ["id", "owner", "created_at", "updated_at"]
 
     def create(self, validated_data: dict):
         validated_data.setdefault("type", EventType.default_event_type())
