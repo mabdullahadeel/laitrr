@@ -13,3 +13,10 @@ export type TEventDetailsResponse = StructuredResponse<
     user_following_enabled: boolean;
   } & TimeStamped
 >;
+
+export type TEventTypesResponse = StructuredResponse<
+  ({
+    id: string;
+    heading: string;
+  } & TimeStamped)[]
+>;

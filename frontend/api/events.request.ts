@@ -2,6 +2,7 @@ import { PaginatedResponse, StructuredResponse } from "@/types/api/common";
 import {
   TEventDetailsResponse,
   TEventListResponseItem,
+  TEventTypesResponse,
 } from "@/types/api/event";
 
 import { privateHttpClient } from "./httpClient";
@@ -33,6 +34,12 @@ export const makeEventsRequest = {
     const res = await privateHttpClient
       .post(`${basePath}/create/`, { json: event })
       .json<StructuredResponse<TEventListResponseItem>>();
+    return res.data;
+  },
+  fetchEventTypes: async () => {
+    const res = await privateHttpClient
+      .get(`${basePath}/event-types/`)
+      .json<TEventTypesResponse>();
     return res.data;
   },
 };
