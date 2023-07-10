@@ -3,4 +3,5 @@ export const queryKeys = {
   OAUTH_SIGN_IN: "oauthSignIn",
   EVENTS_FEED: "eventsFeed",
   EVENT_DETAILS: "eventDetails",
+  EVENT_TYPES: "eventTypes",
 };
