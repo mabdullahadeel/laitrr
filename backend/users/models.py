@@ -3,11 +3,40 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
+def profile_image_path(instance: "Account", filename: str):
+    return f"profile_images/{instance.user.id}.{filename.split('.')[-1]}"
+
+
+class Account(models.Model):
+    id = models.CharField(
+        primary_key=True, default=generate_uuid, editable=False, max_length=36
+    )
+    profile_image = models.ImageField(
+        upload_to=profile_image_path, blank=True, null=True
+    )
+
+    class Meta:
+        verbose_name = "account"
+        verbose_name_plural = "accounts"
+        db_table = "accounts"
+
+    def __str__(self) -> str:
+        return self.id
+
+
 class User(AbstractUser):
     id = models.CharField(
         primary_key=True, default=generate_uuid, editable=False, max_length=36
     )
     email = models.EmailField(unique=True)
+    account = models.OneToOneField(
+        Account,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="user",
+    )
+    updated_at = models.DateTimeField(auto_now=True)
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
