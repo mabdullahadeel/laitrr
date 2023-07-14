@@ -1,12 +1,20 @@
 from typing import Type
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import UserFollow, User as CustomUser
+from .models import UserFollow, User as CustomUser, Account
 
 User: Type[CustomUser] = get_user_model()
 
 
+class PublicAccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = "__all__"
+
+
 class UserPublicSerializer(serializers.ModelSerializer):
+    account = PublicAccountSerializer()
+
     class Meta:
         model = User
         fields = [
@@ -14,7 +22,9 @@ class UserPublicSerializer(serializers.ModelSerializer):
             "username",
             "first_name",
             "last_name",
+            "account",
         ]
+        read_only_fields = ["account"]
 
 
 class FollowUserSerializer(serializers.Serializer):
