@@ -158,7 +158,10 @@ STORAGES = {
         "OPTIONS": {
             "base_url": "http://localhost:8000" + MEDIA_URL,
         },
-    }
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
 }
 
 # Default primary key field type
