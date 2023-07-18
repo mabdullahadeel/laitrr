@@ -10,6 +10,7 @@ export const httpClient = ky.extend({
 export function httpAdpater(): Adapter {
   return {
     async createUser(user) {
+      console.log("user", user);
       return httpClient
         .post("api/auth/signup", {
           json: user,
@@ -17,61 +18,79 @@ export function httpAdpater(): Adapter {
         .json();
     },
     async getUser(id) {
-      return httpClient.get(`api/auth/user/${id}`).json();
+      return httpClient
+        .post(`api/auth/get-user/`, {
+          json: {
+            id,
+          },
+        })
+        .json<AdapterUser>();
     },
     async getUserByEmail(email) {
-      return httpClient.get(`api/auth/user/email/${email}`).json();
+      return httpClient
+        .post(`api/auth/get-user-by-email/`, {
+          json: {
+            email,
+          },
+        })
+        .json<AdapterUser>();
     },
     getUserByAccount({ providerAccountId, provider }) {
+      console.log("providerAccountId", providerAccountId);
       return httpClient
-        .get(`api/auth/user/account/${provider}/${providerAccountId}`)
-        .json();
+        .post(`auth/get-user-by-account/`, {
+          json: {
+            provider_account_id: providerAccountId,
+            provider,
+          },
+        })
+        .json<AdapterUser>();
     },
     async updateUser(user) {
       return httpClient
-        .put(`api/auth/user/${user.id}`, {
+        .put(`auth/update-user/`, {
           json: user,
         })
-        .json();
+        .json<AdapterUser>();
     },
     async deleteUser(userId) {
-      return httpClient.delete(`api/auth/user/${userId}`).json<null>();
+      return httpClient.delete(`auth/delete-user/${userId}`).json<null>();
     },
     async linkAccount(account) {
       return httpClient
-        .post(`api/auth/account`, {
+        .post(`auth/account`, {
           json: account,
         })
         .json<null>();
     },
     async unlinkAccount({ provider, providerAccountId }) {
       return httpClient
-        .delete(`api/auth/account/${provider}/${providerAccountId}`)
+        .delete(`auth/account/${provider}/${providerAccountId}`)
         .json<undefined>();
     },
     async createSession(session) {
       return httpClient
-        .post(`api/auth/session`, {
+        .post(`auth/session`, {
           json: session,
         })
         .json();
     },
     async getSessionAndUser(sessionToken) {
       return httpClient
-        .get(`api/auth/session/${sessionToken}`)
+        .get(`auth/session/${sessionToken}`)
         .json<{ session: AdapterSession; user: AdapterUser } | null>();
     },
     async updateSession({ sessionToken }) {
       return httpClient
-        .put(`api/auth/session/${sessionToken}`)
+        .put(`auth/session/${sessionToken}`)
         .json<AdapterSession>();
     },
     async deleteSession(sessionToken) {
-      return httpClient.delete(`api/auth/session/${sessionToken}`).json<null>();
+      return httpClient.delete(`auth/session/${sessionToken}`).json<null>();
     },
     async createVerificationToken({ expires, identifier, token }) {
       return httpClient
-        .post(`api/auth/verification-request`, {
+        .post(`auth/verification-request`, {
           json: {
             expires,
             identifier,
@@ -82,7 +101,7 @@ export function httpAdpater(): Adapter {
     },
     async useVerificationToken(params) {
       return httpClient
-        .post(`api/auth/verify`, {
+        .post(`auth/verify`, {
           json: params,
         })
         .json();
