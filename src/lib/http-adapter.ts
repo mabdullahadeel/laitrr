@@ -5,6 +5,7 @@ import {
   AdapterSession,
   AdapterUser,
 } from "next-auth/adapters";
+import { decode } from "next-auth/jwt";
 
 import { StructuredResponse } from "@/types/api/common";
 
@@ -79,7 +80,6 @@ export function httpAdpater(): Adapter {
       const res = (await r.json()) as StructuredResponse<
         (AdapterUser & any) | null
       >;
-      console.log("resAccount", res);
       if (res.data === null) {
         return null;
       }

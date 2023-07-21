@@ -19,7 +19,7 @@ export default function Page({ params }: { params: { eventId: string } }) {
     return <div>No data</div>;
   }
 
-  if (query.status === "success") {
+  if (query.status === "error") {
     return <div className="text-center text-3xl font-bold">Error</div>;
   }
 
