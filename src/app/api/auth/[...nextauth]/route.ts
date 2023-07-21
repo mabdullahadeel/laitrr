@@ -13,6 +13,15 @@ const handler = NextAuth({
     }),
   ],
   adapter: httpAdpater(),
+  session: {
+    strategy: "jwt",
+  },
+  callbacks: {
+    signIn(params) {
+      console.log("signIn", params.user.id);
+      return true;
+    },
+  },
 });
 
 export { handler as GET, handler as POST };

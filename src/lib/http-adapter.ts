@@ -1,67 +1,139 @@
 import ky from "ky";
-import { Adapter, AdapterSession, AdapterUser } from "next-auth/adapters";
+import {
+  Adapter,
+  AdapterAccount,
+  AdapterSession,
+  AdapterUser,
+} from "next-auth/adapters";
+
+import { StructuredResponse } from "@/types/api/common";
 
 const BASE_URL = "http://localhost:8000";
 
-export const httpClient = ky.extend({
+export const httpClient = ky.create({
   prefixUrl: BASE_URL,
 });
 
 export function httpAdpater(): Adapter {
   return {
     async createUser(user) {
-      console.log("user", user);
-      return httpClient
-        .post("api/auth/signup", {
-          json: user,
-        })
-        .json();
+      const r = await fetch(`${BASE_URL}/auth/signup/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...user,
+          email_verified: user.emailVerified,
+        }),
+      });
+      const res = (await r.json()) as StructuredResponse<AdapterUser & any>;
+      console.log("resCreateUser", res);
+      if (res.data === null) {
+        return null;
+      }
+
+      return {
+        email: res.data.email,
+        id: res.data.id,
+        emailVerified: res.data.email_verified,
+      } as any;
     },
     async getUser(id) {
-      return httpClient
-        .post(`api/auth/get-user/`, {
-          json: {
-            id,
-          },
-        })
-        .json<AdapterUser>();
+      const r = await fetch(`${BASE_URL}/auth/get-user/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id,
+        }),
+      });
+      const res = (await r.json()) as StructuredResponse<AdapterUser | null>;
+      return res.data;
     },
     async getUserByEmail(email) {
-      return httpClient
-        .post(`api/auth/get-user-by-email/`, {
-          json: {
-            email,
-          },
-        })
-        .json<AdapterUser>();
+      const r = await fetch(`${BASE_URL}/auth/get-user-by-email/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+        }),
+      });
+      const res = (await r.json()) as StructuredResponse<AdapterUser | null>;
+      return res.data;
     },
-    getUserByAccount({ providerAccountId, provider }) {
-      console.log("providerAccountId", providerAccountId);
-      return httpClient
-        .post(`auth/get-user-by-account/`, {
-          json: {
-            provider_account_id: providerAccountId,
-            provider,
-          },
-        })
-        .json<AdapterUser>();
+    async getUserByAccount({ providerAccountId, provider }) {
+      const r = await fetch(`${BASE_URL}/auth/get-user-by-account/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          provider_account_id: providerAccountId,
+          provider,
+        }),
+      });
+      const res = (await r.json()) as StructuredResponse<
+        (AdapterUser & any) | null
+      >;
+      console.log("resAccount", res);
+      if (res.data === null) {
+        return null;
+      }
+      return {
+        email: res.data.email,
+        id: res.data.id,
+        emailVerified: res.data.email_verified,
+      };
     },
     async updateUser(user) {
-      return httpClient
-        .put(`auth/update-user/`, {
-          json: user,
-        })
-        .json<AdapterUser>();
+      const r = await fetch(`${BASE_URL}/auth/update-user/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
+      const res = (await r.json()) as StructuredResponse<
+        (AdapterUser & { email_verified: boolean }) | null
+      >;
+      if (res.data === null) {
+        return;
+      }
+      return {
+        email: res.data.email,
+        id: res.data.id,
+        emailVerified: res.data.email_verified,
+      } as any;
     },
     async deleteUser(userId) {
-      return httpClient.delete(`auth/delete-user/${userId}`).json<null>();
+      const r = await fetch(`${BASE_URL}/auth/delete-user/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: userId,
+        }),
+      });
+      const res = (await r.json()) as StructuredResponse<null>;
+      return res.data;
     },
     async linkAccount(account) {
-      return httpClient
-        .post(`auth/account`, {
-          json: account,
-        })
-        .json<null>();
+      console.log("linkAccountPayload", account);
+      const r = await fetch(`${BASE_URL}/auth/link-account/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(account),
+      });
+      const res = (await r.json()) as StructuredResponse<AdapterAccount | null>;
+      console.log("linkAccount", res);
+      return res.data;
     },
     async unlinkAccount({ provider, providerAccountId }) {
       return httpClient
