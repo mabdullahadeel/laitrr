@@ -48,7 +48,7 @@ const formSchema = z.object({
     }),
   description: z.any().optional(),
   type: z.string().optional(),
-  start_date: z.date().optional(),
+  start_date: z.date(),
   resource_url: z
     .string()
     .regex(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/, {
@@ -228,7 +228,7 @@ export default function Page() {
                     <Calendar
                       mode="single"
                       selected={field.value}
-                      onSelect={field.onChange}
+                      onSelect={(d) => d && field.onChange(d)}
                       disabled={(date) => isPast(date) && !isToday(date)}
                       initialFocus
                     />
