@@ -1,5 +1,4 @@
-import ky from "ky";
-import {
+import type {
   Adapter,
   AdapterAccount,
   AdapterSession,
@@ -11,44 +10,46 @@ import { StructuredResponse } from "@/types/api/common";
 
 const BASE_URL = "http://localhost:8000";
 
-export const httpClient = ky.create({
-  prefixUrl: BASE_URL,
-});
+async function makeServerRequest<TRes>({
+  url,
+  method = "GET",
+  body,
+}: {
+  url: string;
+  method: "GET" | "POST" | "PATCH" | "DELETE";
+  body?: any;
+}) {
+  const r = await fetch(`${BASE_URL}/${url}`, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: process.env.REMOTE_AUTH_RPC_TOKEN!,
+    },
+    body: JSON.stringify(body),
+  });
+  if (!r.ok) {
+    throw new Error("Server error");
+  }
+  const res = (await r.json()) as TRes;
+  return res;
+}
 
 export function httpAdpater(): Adapter {
   return {
     async createUser(user) {
-      const r = await fetch(`${BASE_URL}/auth/signup/`, {
+      const res = await makeServerRequest<StructuredResponse<AdapterUser>>({
+        url: "auth/signup/",
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...user,
-          email_verified: user.emailVerified,
-        }),
+        body: user,
       });
-      const res = (await r.json()) as StructuredResponse<AdapterUser & any>;
-      console.log("resCreateUser", res);
-      if (res.data === null) {
-        return null;
-      }
-
-      return {
-        email: res.data.email,
-        id: res.data.id,
-        emailVerified: res.data.email_verified,
-      } as any;
+      return res.data;
     },
     async getUser(id) {
       try {
-        const r = await fetch(`${BASE_URL}/auth/get-user/${id}/`, {
+        const res = await makeServerRequest<StructuredResponse<AdapterUser>>({
+          url: `auth/get-user/${id}/`,
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
         });
-        const res = (await r.json()) as StructuredResponse<AdapterUser | null>;
         return res.data;
       } catch (error) {
         console.log("error", error);
@@ -56,166 +57,149 @@ export function httpAdpater(): Adapter {
       }
     },
     async getUserByEmail(email) {
-      const r = await fetch(
-        `${BASE_URL}/auth/get-user-by-email/${encodeURIComponent(email)}/`,
-        {
+      try {
+        const res = await makeServerRequest<StructuredResponse<AdapterUser>>({
+          url: `auth/get-user-by-email/${encodeURIComponent(email)}/`,
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const res = (await r.json()) as StructuredResponse<AdapterUser | null>;
-      return res.data;
-    },
-    async getUserByAccount({ providerAccountId, provider }) {
-      const r = await fetch(
-        `${BASE_URL}/auth/get-user-by-account/${encodeURIComponent(
-          provider
-        )}/${encodeURIComponent(providerAccountId)}/`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const res = (await r.json()) as StructuredResponse<
-        (AdapterUser & any) | null
-      >;
-      if (res.data === null) {
+        });
+        return res.data;
+      } catch (error) {
+        console.log("error", error);
         return null;
       }
-      return {
-        email: res.data.email,
-        id: res.data.id,
-        emailVerified: res.data.email_verified,
-      };
+    },
+    async getUserByAccount({ providerAccountId, provider }) {
+      try {
+        const res = await makeServerRequest<StructuredResponse<AdapterUser>>({
+          url: `auth/get-user-by-account/${encodeURIComponent(
+            provider
+          )}/${encodeURIComponent(providerAccountId)}/`,
+          method: "GET",
+        });
+        return res.data;
+      } catch (error) {
+        console.log("error", error);
+        return null;
+      }
     },
     async updateUser(user) {
-      const r = await fetch(`${BASE_URL}/auth/update-user/`, {
+      const res = await makeServerRequest<StructuredResponse<AdapterUser>>({
+        url: `auth/update-user/`,
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
+        body: user,
       });
-      const res = (await r.json()) as StructuredResponse<
-        (AdapterUser & { email_verified: boolean }) | null
-      >;
-      if (res.data === null) {
-        return;
-      }
-      return {
-        email: res.data.email,
-        id: res.data.id,
-        emailVerified: res.data.email_verified,
-      } as any;
+      return res.data;
     },
     async deleteUser(userId) {
-      const r = await fetch(`${BASE_URL}/auth/delete-user/${userId}/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const res = (await r.json()) as StructuredResponse<null>;
-      return res.data;
+      try {
+        const res = await makeServerRequest<StructuredResponse<null>>({
+          url: `auth/delete-user/${userId}/`,
+          method: "DELETE",
+        });
+        return res.data;
+      } catch (error) {
+        console.log("error", error);
+        return null;
+      }
     },
     async linkAccount(account) {
-      console.log("linkAccountPayload", account);
-      const r = await fetch(`${BASE_URL}/auth/link-account/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(account),
-      });
-      const res = (await r.json()) as StructuredResponse<AdapterAccount | null>;
-      console.log("linkAccount", res);
-      return res.data;
+      try {
+        const res = await makeServerRequest<StructuredResponse<AdapterAccount>>(
+          {
+            url: `auth/link-account/`,
+            method: "POST",
+            body: account,
+          }
+        );
+        return res.data;
+      } catch (error) {
+        console.log("error", error);
+        return null;
+      }
     },
     async unlinkAccount({ provider, providerAccountId }) {
-      const r = await fetch(
-        `${BASE_URL}/auth/unlink-account/${encodeURIComponent(
+      await makeServerRequest<StructuredResponse<null>>({
+        url: `auth/unlink-account/${encodeURIComponent(
           provider
         )}/${encodeURIComponent(providerAccountId)}/`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const res = (await r.json()) as StructuredResponse<null>;
-      return res.data === null ? undefined : res.data;
+        method: "DELETE",
+      });
+      return undefined;
     },
     async createSession(session) {
-      const r = await fetch(`${BASE_URL}/auth/create-session/`, {
+      const res = await makeServerRequest<StructuredResponse<AdapterSession>>({
+        url: `auth/create-session/`,
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(session),
+        body: session,
       });
-      const res = (await r.json()) as StructuredResponse<AdapterSession>;
       return res.data;
     },
     async getSessionAndUser(sessionToken) {
-      const r = await fetch(`${BASE_URL}/auth/get-session/${sessionToken}/`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const res = (await r.json()) as StructuredResponse<{
-        session: AdapterSession;
-        user: AdapterUser;
-      }>;
-      return res.data;
+      try {
+        const res = await makeServerRequest<
+          StructuredResponse<{
+            session: AdapterSession;
+            user: AdapterUser;
+          }>
+        >({
+          url: `auth/get-session/${sessionToken}/`,
+          method: "GET",
+        });
+        return res.data;
+      } catch (error) {
+        console.log("error", error);
+        return null;
+      }
     },
     async updateSession(session) {
-      const r = await fetch(`${BASE_URL}/auth/update-session/`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(session),
-      });
-      const res = (await r.json()) as StructuredResponse<AdapterSession>;
-      return res.data;
+      try {
+        const res = await makeServerRequest<StructuredResponse<AdapterSession>>(
+          {
+            url: `auth/update-session/`,
+            method: "PATCH",
+            body: session,
+          }
+        );
+        return res.data;
+      } catch (error) {
+        console.log("error", error);
+        return null;
+      }
     },
     async deleteSession(sessionToken) {
-      const r = await fetch(`${BASE_URL}/auth/delete-session/${sessionToken}`, {
+      await makeServerRequest<StructuredResponse<null>>({
+        url: `auth/delete-session/${sessionToken}/`,
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
       });
-      const res = (await r.json()) as StructuredResponse<null>;
-      return res.data;
+      return null;
     },
     async createVerificationToken(verificationToken) {
-      const r = await fetch(`${BASE_URL}/auth/create-verification-token/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(verificationToken),
-      });
-      const res = (await r.json()) as StructuredResponse<VerificationToken>;
-      return res.data;
+      try {
+        const res = await makeServerRequest<
+          StructuredResponse<VerificationToken>
+        >({
+          url: `auth/create-verification-token/`,
+          method: "POST",
+          body: verificationToken,
+        });
+        return res.data;
+      } catch (error) {
+        console.log("error", error);
+        return null;
+      }
     },
     async useVerificationToken(params) {
-      const r = await fetch(`${BASE_URL}/auth/use-verification-token/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(params),
-      });
-      const res = (await r.json()) as StructuredResponse<null>;
-      return res.data;
+      try {
+        const res = await makeServerRequest<StructuredResponse<null>>({
+          url: `auth/use-verification-token/`,
+          method: "POST",
+          body: params,
+        });
+        return res.data;
+      } catch (error) {
+        console.log("error", error);
+        return null;
+      }
     },
   };
 }
