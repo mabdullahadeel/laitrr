@@ -4,8 +4,8 @@ import {
   AdapterAccount,
   AdapterSession,
   AdapterUser,
+  VerificationToken,
 } from "next-auth/adapters";
-import { decode } from "next-auth/jwt";
 
 import { StructuredResponse } from "@/types/api/common";
 
@@ -41,42 +41,45 @@ export function httpAdpater(): Adapter {
       } as any;
     },
     async getUser(id) {
-      const r = await fetch(`${BASE_URL}/auth/get-user/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id,
-        }),
-      });
-      const res = (await r.json()) as StructuredResponse<AdapterUser | null>;
-      return res.data;
+      try {
+        const r = await fetch(`${BASE_URL}/auth/get-user/${id}/`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const res = (await r.json()) as StructuredResponse<AdapterUser | null>;
+        return res.data;
+      } catch (error) {
+        console.log("error", error);
+        return null;
+      }
     },
     async getUserByEmail(email) {
-      const r = await fetch(`${BASE_URL}/auth/get-user-by-email/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-        }),
-      });
+      const r = await fetch(
+        `${BASE_URL}/auth/get-user-by-email/${encodeURIComponent(email)}/`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       const res = (await r.json()) as StructuredResponse<AdapterUser | null>;
       return res.data;
     },
     async getUserByAccount({ providerAccountId, provider }) {
-      const r = await fetch(`${BASE_URL}/auth/get-user-by-account/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          provider_account_id: providerAccountId,
-          provider,
-        }),
-      });
+      const r = await fetch(
+        `${BASE_URL}/auth/get-user-by-account/${encodeURIComponent(
+          provider
+        )}/${encodeURIComponent(providerAccountId)}/`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       const res = (await r.json()) as StructuredResponse<
         (AdapterUser & any) | null
       >;
@@ -91,7 +94,7 @@ export function httpAdpater(): Adapter {
     },
     async updateUser(user) {
       const r = await fetch(`${BASE_URL}/auth/update-user/`, {
-        method: "POST",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
@@ -110,14 +113,11 @@ export function httpAdpater(): Adapter {
       } as any;
     },
     async deleteUser(userId) {
-      const r = await fetch(`${BASE_URL}/auth/delete-user/`, {
+      const r = await fetch(`${BASE_URL}/auth/delete-user/${userId}/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          id: userId,
-        }),
       });
       const res = (await r.json()) as StructuredResponse<null>;
       return res.data;
@@ -136,47 +136,86 @@ export function httpAdpater(): Adapter {
       return res.data;
     },
     async unlinkAccount({ provider, providerAccountId }) {
-      return httpClient
-        .delete(`auth/account/${provider}/${providerAccountId}`)
-        .json<undefined>();
+      const r = await fetch(
+        `${BASE_URL}/auth/unlink-account/${encodeURIComponent(
+          provider
+        )}/${encodeURIComponent(providerAccountId)}/`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const res = (await r.json()) as StructuredResponse<null>;
+      return res.data === null ? undefined : res.data;
     },
     async createSession(session) {
-      return httpClient
-        .post(`auth/session`, {
-          json: session,
-        })
-        .json();
+      const r = await fetch(`${BASE_URL}/auth/create-session/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(session),
+      });
+      const res = (await r.json()) as StructuredResponse<AdapterSession>;
+      return res.data;
     },
     async getSessionAndUser(sessionToken) {
-      return httpClient
-        .get(`auth/session/${sessionToken}`)
-        .json<{ session: AdapterSession; user: AdapterUser } | null>();
+      const r = await fetch(`${BASE_URL}/auth/get-session/${sessionToken}/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const res = (await r.json()) as StructuredResponse<{
+        session: AdapterSession;
+        user: AdapterUser;
+      }>;
+      return res.data;
     },
-    async updateSession({ sessionToken }) {
-      return httpClient
-        .put(`auth/session/${sessionToken}`)
-        .json<AdapterSession>();
+    async updateSession(session) {
+      const r = await fetch(`${BASE_URL}/auth/update-session/`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(session),
+      });
+      const res = (await r.json()) as StructuredResponse<AdapterSession>;
+      return res.data;
     },
     async deleteSession(sessionToken) {
-      return httpClient.delete(`auth/session/${sessionToken}`).json<null>();
+      const r = await fetch(`${BASE_URL}/auth/delete-session/${sessionToken}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const res = (await r.json()) as StructuredResponse<null>;
+      return res.data;
     },
-    async createVerificationToken({ expires, identifier, token }) {
-      return httpClient
-        .post(`auth/verification-request`, {
-          json: {
-            expires,
-            identifier,
-            token,
-          },
-        })
-        .json();
+    async createVerificationToken(verificationToken) {
+      const r = await fetch(`${BASE_URL}/auth/create-verification-token/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(verificationToken),
+      });
+      const res = (await r.json()) as StructuredResponse<VerificationToken>;
+      return res.data;
     },
     async useVerificationToken(params) {
-      return httpClient
-        .post(`auth/verify`, {
-          json: params,
-        })
-        .json();
+      const r = await fetch(`${BASE_URL}/auth/use-verification-token/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(params),
+      });
+      const res = (await r.json()) as StructuredResponse<null>;
+      return res.data;
     },
   };
 }
