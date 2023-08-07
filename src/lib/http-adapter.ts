@@ -8,6 +8,8 @@ import type {
 
 import { StructuredResponse } from "@/types/api/common";
 
+import { HttpAdpaterManager, type AdapterManagerConfig } from "./manager";
+
 const BASE_URL = "http://localhost:8000";
 
 async function makeServerRequest<TRes>({
@@ -34,7 +36,10 @@ async function makeServerRequest<TRes>({
   return res;
 }
 
-export function httpAdpater(): Adapter {
+export function httpAdpater<WithVerificationToken = boolean>(
+  opts: AdapterManagerConfig
+): Adapter<WithVerificationToken> {
+  const manager = new HttpAdpaterManager(opts);
   return {
     async createUser(user) {
       const res = await makeServerRequest<StructuredResponse<AdapterUser>>({
@@ -68,15 +73,16 @@ export function httpAdpater(): Adapter {
         return null;
       }
     },
-    async getUserByAccount({ providerAccountId, provider }) {
+    async getUserByAccount(payload) {
       try {
-        const res = await makeServerRequest<StructuredResponse<AdapterUser>>({
-          url: `auth/get-user-by-account/${encodeURIComponent(
-            provider
-          )}/${encodeURIComponent(providerAccountId)}/`,
-          method: "GET",
-        });
-        return res.data;
+        // const res = await makeServerRequest<StructuredResponse<AdapterUser>>({
+        //   url: `auth/get-user-by-account/${encodeURIComponent(
+        //     provider
+        //   )}/${encodeURIComponent(providerAccountId)}/`,
+        //   method: "GET",
+        // });
+        // return res.data;
+        return await manager.getUserByAccount(payload);
       } catch (error) {
         console.log("error", error);
         return null;

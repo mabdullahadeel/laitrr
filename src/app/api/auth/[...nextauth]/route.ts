@@ -14,7 +14,22 @@ const handler = NextAuth({
       clientSecret: process.env.GOOGLE_OAUTH2_SECRET!,
     }),
   ],
-  adapter: httpAdpater(),
+  adapter: httpAdpater({
+    baseURL: "http://localhost:8000",
+    headers: {
+      Authorization: process.env.REMOTE_AUTH_RPC_TOKEN!,
+    },
+    adapterProcedures: {
+      getUserByAccount: ({ providerAccountId, provider }) => ({
+        path: `auth/get-user-by-account/${encodeURIComponent(
+          provider
+        )}/${encodeURIComponent(providerAccountId)}/`,
+        serialize(data) {
+          return data.data;
+        },
+      }),
+    },
+  }),
   session: {
     strategy: "jwt",
   },
