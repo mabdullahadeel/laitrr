@@ -5,7 +5,7 @@ import { mergeJSON } from "./json";
 
 type ProcedureConfig = {
   path: string;
-  serialize?: (res: any) => any;
+  select?: (res: any) => any;
 } & FetchOptions;
 
 type NoOptionalAdapter = Required<Adapter>;
@@ -68,7 +68,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
   public async createUser(user: AdapterArg_0<"createUser">) {
     const {
       path,
-      serialize = defaultSerializer,
+      select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.createUser(user);
 
@@ -83,7 +83,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
   public async getUserById(id: AdapterArg_0<"getUser">) {
     const {
       path,
-      serialize = defaultSerializer,
+      select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.getUserById(id);
 
@@ -98,7 +98,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
   public async getUserByEmail(email: AdapterArg_0<"getUserByEmail">) {
     const {
       path,
-      serialize = defaultSerializer,
+      select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.getUserByEmail(email);
 
@@ -115,7 +115,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
   ) {
     const {
       path,
-      serialize = defaultSerializer,
+      select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.getUserByAccount(
       providerAccountId
@@ -136,7 +136,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
 
     const {
       path,
-      serialize = defaultSerializer,
+      select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.deleteUser(
       providerAccountId
@@ -153,7 +153,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
   public async linkAccount(account: AdapterArg_0<"linkAccount">) {
     const {
       path,
-      serialize = defaultSerializer,
+      select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.linkAccount(account);
 
@@ -172,7 +172,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
 
     const {
       path,
-      serialize = defaultSerializer,
+      select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.unlinkAccount(
       providerAccountId
@@ -189,7 +189,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
   public async createSession(account: AdapterArg_0<"createSession">) {
     const {
       path,
-      serialize = defaultSerializer,
+      select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.createSession(account);
 
@@ -204,7 +204,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
   public async getSessionAndUser(account: AdapterArg_0<"getSessionAndUser">) {
     const {
       path,
-      serialize = defaultSerializer,
+      select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.getSessionAndUser(account);
 
@@ -219,7 +219,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
   public async updateSession(account: AdapterArg_0<"updateSession">) {
     const {
       path,
-      serialize = defaultSerializer,
+      select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.updateSession(account);
 
@@ -234,7 +234,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
   public async deleteSession(account: AdapterArg_0<"deleteSession">) {
     const {
       path,
-      serialize = defaultSerializer,
+      select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.deleteSession(account);
 
@@ -255,7 +255,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
 
     const {
       path,
-      serialize = defaultSerializer,
+      select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.createVerificationToken(
       providerAccountId
@@ -278,7 +278,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
 
     const {
       path,
-      serialize = defaultSerializer,
+      select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.useVerificationToken(
       providerAccountId
@@ -295,7 +295,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
   public async updateUser(user: AdapterArg_0<"updateUser">) {
     const {
       path,
-      serialize = defaultSerializer,
+      select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.updateUser(user);
 

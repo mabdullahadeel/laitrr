@@ -26,26 +26,26 @@ const handler = NextAuth({
         path: "auth/signup/",
         method: "POST",
         body: user,
-        serialize: defaultSerializer,
+        select: defaultSerializer,
       }),
       getUserById: (id) => ({
         path: `auth/get-user/${id}/`,
-        serialize: defaultSerializer,
+        select: defaultSerializer,
       }),
       getUserByEmail: (email) => ({
         path: `auth/get-user-by-email/${encodeURIComponent(email)}/`,
-        serialize: defaultSerializer,
+        select: defaultSerializer,
       }),
       getUserByAccount: ({ providerAccountId, provider }) => ({
         path: `auth/get-user-by-account/${encodeURIComponent(
           provider
         )}/${encodeURIComponent(providerAccountId)}/`,
-        serialize: defaultSerializer,
+        select: defaultSerializer,
       }),
       updateUser: (user) => ({
         path: "auth/update-user/",
         method: "PATCH",
-        serialize: defaultSerializer,
+        select: defaultSerializer,
       }),
       deleteUser: (id) => ({
         path: `auth/delete-user/${id}/`,
@@ -55,7 +55,7 @@ const handler = NextAuth({
         path: "auth/link-account/",
         method: "POST",
         body: account,
-        serialize: defaultSerializer,
+        select: defaultSerializer,
       }),
       unlinkAccount: ({ provider, providerAccountId }) => ({
         path: `auth/unlink-account/${encodeURIComponent(
@@ -67,17 +67,17 @@ const handler = NextAuth({
         path: "auth/create-session/",
         method: "POST",
         body: session,
-        serialize: defaultSerializer,
+        select: defaultSerializer,
       }),
       getSessionAndUser: (sessionToken) => ({
         path: `auth/get-session/${sessionToken}/`,
-        serialize: defaultSerializer,
+        select: defaultSerializer,
       }),
       updateSession: (session) => ({
         path: "auth/update-session/",
         method: "PATCH",
         body: session,
-        serialize: defaultSerializer,
+        select: defaultSerializer,
       }),
       deleteSession: (sessionToken) => ({
         path: `auth/delete-session/${sessionToken}/`,
@@ -87,13 +87,13 @@ const handler = NextAuth({
         path: "auth/create-verification-token/",
         method: "POST",
         body: verificationToken,
-        serialize: defaultSerializer,
+        select: defaultSerializer,
       }),
       useVerificationToken: (params) => ({
         path: "auth/use-verification-token/",
         method: "POST",
         body: params,
-        serialize: defaultSerializer,
+        select: defaultSerializer,
       }),
     },
   }),
