@@ -66,33 +66,48 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
   ) {}
 
   public async createUser(user: AdapterArg_0<"createUser">) {
-    const { path, ...fetchOptions } =
-      this.defaultFetchOptions.adapterProcedures.createUser(user);
+    const {
+      path,
+      serialize = defaultSerializer,
+      ...fetchOptions
+    } = this.defaultFetchOptions.adapterProcedures.createUser(user);
 
-    return ofetch(
+    const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
+
+    return serialize(res);
   }
 
   public async getUserById(id: AdapterArg_0<"getUser">) {
-    const { path, ...fetchOptions } =
-      this.defaultFetchOptions.adapterProcedures.getUserById(id);
+    const {
+      path,
+      serialize = defaultSerializer,
+      ...fetchOptions
+    } = this.defaultFetchOptions.adapterProcedures.getUserById(id);
 
-    return ofetch(
+    const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
+
+    return serialize(res);
   }
 
   public async getUserByEmail(email: AdapterArg_0<"getUserByEmail">) {
-    const { path, ...fetchOptions } =
-      this.defaultFetchOptions.adapterProcedures.getUserByEmail(email);
+    const {
+      path,
+      serialize = defaultSerializer,
+      ...fetchOptions
+    } = this.defaultFetchOptions.adapterProcedures.getUserByEmail(email);
 
-    return ofetch(
+    const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
+
+    return serialize(res);
   }
 
   public async getUserByAccount(
@@ -119,23 +134,35 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       throw new Error("deleteUser is not defined in procedures");
     }
 
-    const { path, ...fetchOptions } =
-      this.defaultFetchOptions.adapterProcedures.deleteUser(providerAccountId);
+    const {
+      path,
+      serialize = defaultSerializer,
+      ...fetchOptions
+    } = this.defaultFetchOptions.adapterProcedures.deleteUser(
+      providerAccountId
+    );
 
-    return ofetch(
+    const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
+
+    return serialize(res);
   }
 
   public async linkAccount(account: AdapterArg_0<"linkAccount">) {
-    const { path, ...fetchOptions } =
-      this.defaultFetchOptions.adapterProcedures.linkAccount(account);
+    const {
+      path,
+      serialize = defaultSerializer,
+      ...fetchOptions
+    } = this.defaultFetchOptions.adapterProcedures.linkAccount(account);
 
-    return ofetch(
+    const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
+
+    return serialize(res);
   }
 
   public async unlinkAccount(providerAccountId: AdapterArg_0<"unlinkAccount">) {
@@ -143,55 +170,80 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       throw new Error("unlinkAccount is not defined in procedures");
     }
 
-    const { path, ...fetchOptions } =
-      this.defaultFetchOptions.adapterProcedures.unlinkAccount(
-        providerAccountId
-      );
+    const {
+      path,
+      serialize = defaultSerializer,
+      ...fetchOptions
+    } = this.defaultFetchOptions.adapterProcedures.unlinkAccount(
+      providerAccountId
+    );
 
-    return ofetch(
+    const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
+
+    return serialize(res);
   }
 
   public async createSession(account: AdapterArg_0<"createSession">) {
-    const { path, ...fetchOptions } =
-      this.defaultFetchOptions.adapterProcedures.createSession(account);
+    const {
+      path,
+      serialize = defaultSerializer,
+      ...fetchOptions
+    } = this.defaultFetchOptions.adapterProcedures.createSession(account);
 
-    return ofetch(
+    const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
+
+    return serialize(res);
   }
 
   public async getSessionAndUser(account: AdapterArg_0<"getSessionAndUser">) {
-    const { path, ...fetchOptions } =
-      this.defaultFetchOptions.adapterProcedures.getSessionAndUser(account);
+    const {
+      path,
+      serialize = defaultSerializer,
+      ...fetchOptions
+    } = this.defaultFetchOptions.adapterProcedures.getSessionAndUser(account);
 
-    return ofetch(
+    const res = ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
+
+    return serialize(res);
   }
 
   public async updateSession(account: AdapterArg_0<"updateSession">) {
-    const { path, ...fetchOptions } =
-      this.defaultFetchOptions.adapterProcedures.updateSession(account);
+    const {
+      path,
+      serialize = defaultSerializer,
+      ...fetchOptions
+    } = this.defaultFetchOptions.adapterProcedures.updateSession(account);
 
-    return ofetch(
+    const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
+
+    return serialize(res);
   }
 
   public async deleteSession(account: AdapterArg_0<"deleteSession">) {
-    const { path, ...fetchOptions } =
-      this.defaultFetchOptions.adapterProcedures.deleteSession(account);
+    const {
+      path,
+      serialize = defaultSerializer,
+      ...fetchOptions
+    } = this.defaultFetchOptions.adapterProcedures.deleteSession(account);
 
-    return ofetch(
+    const res = ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
+
+    return serialize(res);
   }
 
   public async createVerificationToken(
@@ -201,15 +253,20 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       throw new Error("createVerificationToken is not defined in procedures");
     }
 
-    const { path, ...fetchOptions } =
-      this.defaultFetchOptions.adapterProcedures.createVerificationToken(
-        providerAccountId
-      );
+    const {
+      path,
+      serialize = defaultSerializer,
+      ...fetchOptions
+    } = this.defaultFetchOptions.adapterProcedures.createVerificationToken(
+      providerAccountId
+    );
 
-    return ofetch(
+    const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
+
+    return serialize(res);
   }
 
   public async useVerificationToken(
@@ -219,14 +276,34 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       throw new Error("useVerificationToken is not defined in procedures");
     }
 
-    const { path, ...fetchOptions } =
-      this.defaultFetchOptions.adapterProcedures.useVerificationToken(
-        providerAccountId
-      );
+    const {
+      path,
+      serialize = defaultSerializer,
+      ...fetchOptions
+    } = this.defaultFetchOptions.adapterProcedures.useVerificationToken(
+      providerAccountId
+    );
 
-    return ofetch(
+    const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
+
+    return serialize(res);
+  }
+
+  public async updateUser(user: AdapterArg_0<"updateUser">) {
+    const {
+      path,
+      serialize = defaultSerializer,
+      ...fetchOptions
+    } = this.defaultFetchOptions.adapterProcedures.updateUser(user);
+
+    const res = await ofetch(
+      path,
+      mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
+    );
+
+    return serialize(res);
   }
 }

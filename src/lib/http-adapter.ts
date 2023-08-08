@@ -1,40 +1,6 @@
-import type {
-  Adapter,
-  AdapterAccount,
-  AdapterSession,
-  AdapterUser,
-  VerificationToken,
-} from "next-auth/adapters";
-
-import { StructuredResponse } from "@/types/api/common";
+import type { Adapter } from "next-auth/adapters";
 
 import { HttpAdpaterManager, type AdapterManagerConfig } from "./manager";
-
-const BASE_URL = "http://localhost:8000";
-
-async function makeServerRequest<TRes>({
-  url,
-  method = "GET",
-  body,
-}: {
-  url: string;
-  method: "GET" | "POST" | "PATCH" | "DELETE";
-  body?: any;
-}) {
-  const r = await fetch(`${BASE_URL}/${url}`, {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: process.env.REMOTE_AUTH_RPC_TOKEN!,
-    },
-    body: JSON.stringify(body),
-  });
-  if (!r.ok) {
-    throw new Error("Server error");
-  }
-  const res = (await r.json()) as TRes;
-  return res;
-}
 
 export function httpAdpater<WithVerificationToken = boolean>(
   opts: AdapterManagerConfig
@@ -42,20 +8,11 @@ export function httpAdpater<WithVerificationToken = boolean>(
   const manager = new HttpAdpaterManager(opts);
   return {
     async createUser(user) {
-      const res = await makeServerRequest<StructuredResponse<AdapterUser>>({
-        url: "auth/signup/",
-        method: "POST",
-        body: user,
-      });
-      return res.data;
+      return await manager.createUser(user);
     },
     async getUser(id) {
       try {
-        const res = await makeServerRequest<StructuredResponse<AdapterUser>>({
-          url: `auth/get-user/${id}/`,
-          method: "GET",
-        });
-        return res.data;
+        return await manager.getUserById(id);
       } catch (error) {
         console.log("error", error);
         return null;
@@ -63,11 +20,7 @@ export function httpAdpater<WithVerificationToken = boolean>(
     },
     async getUserByEmail(email) {
       try {
-        const res = await makeServerRequest<StructuredResponse<AdapterUser>>({
-          url: `auth/get-user-by-email/${encodeURIComponent(email)}/`,
-          method: "GET",
-        });
-        return res.data;
+        return await manager.getUserByEmail(email);
       } catch (error) {
         console.log("error", error);
         return null;
@@ -75,13 +28,6 @@ export function httpAdpater<WithVerificationToken = boolean>(
     },
     async getUserByAccount(payload) {
       try {
-        // const res = await makeServerRequest<StructuredResponse<AdapterUser>>({
-        //   url: `auth/get-user-by-account/${encodeURIComponent(
-        //     provider
-        //   )}/${encodeURIComponent(providerAccountId)}/`,
-        //   method: "GET",
-        // });
-        // return res.data;
         return await manager.getUserByAccount(payload);
       } catch (error) {
         console.log("error", error);
@@ -89,20 +35,11 @@ export function httpAdpater<WithVerificationToken = boolean>(
       }
     },
     async updateUser(user) {
-      const res = await makeServerRequest<StructuredResponse<AdapterUser>>({
-        url: `auth/update-user/`,
-        method: "PATCH",
-        body: user,
-      });
-      return res.data;
+      return await manager.updateUser(user);
     },
     async deleteUser(userId) {
       try {
-        const res = await makeServerRequest<StructuredResponse<null>>({
-          url: `auth/delete-user/${userId}/`,
-          method: "DELETE",
-        });
-        return res.data;
+        return await manager.deleteUser(userId);
       } catch (error) {
         console.log("error", error);
         return null;
@@ -110,48 +47,22 @@ export function httpAdpater<WithVerificationToken = boolean>(
     },
     async linkAccount(account) {
       try {
-        const res = await makeServerRequest<StructuredResponse<AdapterAccount>>(
-          {
-            url: `auth/link-account/`,
-            method: "POST",
-            body: account,
-          }
-        );
-        return res.data;
+        return await manager.linkAccount(account);
       } catch (error) {
         console.log("error", error);
         return null;
       }
     },
-    async unlinkAccount({ provider, providerAccountId }) {
-      await makeServerRequest<StructuredResponse<null>>({
-        url: `auth/unlink-account/${encodeURIComponent(
-          provider
-        )}/${encodeURIComponent(providerAccountId)}/`,
-        method: "DELETE",
-      });
+    async unlinkAccount(args) {
+      await manager.unlinkAccount(args);
       return undefined;
     },
     async createSession(session) {
-      const res = await makeServerRequest<StructuredResponse<AdapterSession>>({
-        url: `auth/create-session/`,
-        method: "POST",
-        body: session,
-      });
-      return res.data;
+      return await manager.createSession(session);
     },
     async getSessionAndUser(sessionToken) {
       try {
-        const res = await makeServerRequest<
-          StructuredResponse<{
-            session: AdapterSession;
-            user: AdapterUser;
-          }>
-        >({
-          url: `auth/get-session/${sessionToken}/`,
-          method: "GET",
-        });
-        return res.data;
+        return await manager.getSessionAndUser(sessionToken);
       } catch (error) {
         console.log("error", error);
         return null;
@@ -159,36 +70,19 @@ export function httpAdpater<WithVerificationToken = boolean>(
     },
     async updateSession(session) {
       try {
-        const res = await makeServerRequest<StructuredResponse<AdapterSession>>(
-          {
-            url: `auth/update-session/`,
-            method: "PATCH",
-            body: session,
-          }
-        );
-        return res.data;
+        return await manager.updateSession(session);
       } catch (error) {
         console.log("error", error);
         return null;
       }
     },
     async deleteSession(sessionToken) {
-      await makeServerRequest<StructuredResponse<null>>({
-        url: `auth/delete-session/${sessionToken}/`,
-        method: "DELETE",
-      });
+      await manager.deleteSession(sessionToken);
       return null;
     },
     async createVerificationToken(verificationToken) {
       try {
-        const res = await makeServerRequest<
-          StructuredResponse<VerificationToken>
-        >({
-          url: `auth/create-verification-token/`,
-          method: "POST",
-          body: verificationToken,
-        });
-        return res.data;
+        return await manager.createVerificationToken(verificationToken);
       } catch (error) {
         console.log("error", error);
         return null;
@@ -196,12 +90,7 @@ export function httpAdpater<WithVerificationToken = boolean>(
     },
     async useVerificationToken(params) {
       try {
-        const res = await makeServerRequest<StructuredResponse<null>>({
-          url: `auth/use-verification-token/`,
-          method: "POST",
-          body: params,
-        });
-        return res.data;
+        return await manager.useVerificationToken(params);
       } catch (error) {
         console.log("error", error);
         return null;
