@@ -22,12 +22,14 @@ const handler = NextAuth({
       Authorization: process.env.REMOTE_AUTH_RPC_TOKEN!,
     },
     adapterProcedures: {
-      createUser: (user) => ({
-        path: "auth/signup/",
-        method: "POST",
-        body: user,
-        select: defaultSerializer,
-      }),
+      createUser(user) {
+        return {
+          path: "auth/signup/",
+          method: "POST",
+          body: user,
+          select: defaultSerializer,
+        };
+      },
       getUserById: (id) => ({
         path: `auth/get-user/${id}/`,
         select: defaultSerializer,

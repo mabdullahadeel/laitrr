@@ -2,10 +2,11 @@ import type { Adapter } from "next-auth/adapters";
 import { ofetch, type FetchOptions } from "ofetch";
 
 import { mergeJSON } from "./json";
+import * as schemas from "./validation";
 
-type ProcedureConfig = {
+type ProcedureConfig<TRes = unknown> = {
   path: string;
-  select?: (res: any) => any;
+  select?: (res: TRes) => any;
 } & FetchOptions;
 
 type NoOptionalAdapter = Required<Adapter>;
@@ -14,42 +15,60 @@ type AdapterArg_0<T extends keyof NoOptionalAdapter> = Parameters<
 >[0];
 
 type DefaultAdapterProcedures = {
-  createUser: (user: AdapterArg_0<"createUser">) => ProcedureConfig;
-  getUserById: (id: AdapterArg_0<"getUser">) => ProcedureConfig;
-  getUserByEmail: (email: AdapterArg_0<"getUserByEmail">) => ProcedureConfig;
-  getUserByAccount: (
+  createUser: <TRes = unknown>(
+    user: AdapterArg_0<"createUser">
+  ) => ProcedureConfig<TRes>;
+  getUserById: <TRes = unknown>(
+    id: AdapterArg_0<"getUser">
+  ) => ProcedureConfig<TRes>;
+  getUserByEmail: <TRes = unknown>(
+    email: AdapterArg_0<"getUserByEmail">
+  ) => ProcedureConfig<TRes>;
+  getUserByAccount: <TRes = unknown>(
     account: AdapterArg_0<"getUserByAccount">
-  ) => ProcedureConfig;
-  updateUser: (user: AdapterArg_0<"updateUser">) => ProcedureConfig;
-  linkAccount: (account: AdapterArg_0<"linkAccount">) => ProcedureConfig;
-  deleteUser?: (id: AdapterArg_0<"deleteUser">) => ProcedureConfig;
-  unlinkAccount?: (account: AdapterArg_0<"unlinkAccount">) => ProcedureConfig;
-  createSession: (session: AdapterArg_0<"createSession">) => ProcedureConfig;
-  getSessionAndUser: (
+  ) => ProcedureConfig<TRes>;
+  updateUser: <TRes = unknown>(
+    user: AdapterArg_0<"updateUser">
+  ) => ProcedureConfig<TRes>;
+  linkAccount: <TRes = unknown>(
+    account: AdapterArg_0<"linkAccount">
+  ) => ProcedureConfig<TRes>;
+  deleteUser?: <TRes = unknown>(
+    id: AdapterArg_0<"deleteUser">
+  ) => ProcedureConfig<TRes>;
+  unlinkAccount?: <TRes = unknown>(
+    account: AdapterArg_0<"unlinkAccount">
+  ) => ProcedureConfig<TRes>;
+  createSession: <TRes = unknown>(
+    session: AdapterArg_0<"createSession">
+  ) => ProcedureConfig<TRes>;
+  getSessionAndUser: <TRes = unknown>(
     sessionToken: AdapterArg_0<"getSessionAndUser">
-  ) => ProcedureConfig;
-  updateSession: (session: AdapterArg_0<"updateSession">) => ProcedureConfig;
-  deleteSession: (
+  ) => ProcedureConfig<TRes>;
+  updateSession: <TRes = unknown>(
+    session: AdapterArg_0<"updateSession">
+  ) => ProcedureConfig<TRes>;
+  deleteSession: <TRes = unknown>(
     sessionToken: AdapterArg_0<"deleteSession">
-  ) => ProcedureConfig;
-  createVerificationToken?: (
+  ) => ProcedureConfig<TRes>;
+  createVerificationToken?: <TRes = unknown>(
     verificationToken: AdapterArg_0<"createVerificationToken">
-  ) => ProcedureConfig;
-  useVerificationToken?: (
+  ) => ProcedureConfig<TRes>;
+  useVerificationToken?: <TRes = unknown>(
     params: AdapterArg_0<"useVerificationToken">
-  ) => ProcedureConfig;
+  ) => ProcedureConfig<TRes>;
 };
 
 type AdapterProcedures<WithVerificationToken = boolean> =
   DefaultAdapterProcedures &
     (WithVerificationToken extends true
       ? {
-          createVerificationToken: (
+          createVerificationToken: <TRes = unknown>(
             verificationToken: AdapterArg_0<"createVerificationToken">
-          ) => ProcedureConfig;
-          useVerificationToken: (
+          ) => ProcedureConfig<TRes>;
+          useVerificationToken: <TRes = unknown>(
             params: AdapterArg_0<"useVerificationToken">
-          ) => ProcedureConfig;
+          ) => ProcedureConfig<TRes>;
         }
       : {});
 
@@ -71,13 +90,12 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.createUser(user);
-
     const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-
-    return serialize(res);
+    const valid = await schemas.createUserSchema.parseAsync(res);
+    return serialize(valid);
   }
 
   public async getUserById(id: AdapterArg_0<"getUser">) {
@@ -86,13 +104,12 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.getUserById(id);
-
     const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-
-    return serialize(res);
+    const valid = await schemas.getUserSchema.parseAsync(res);
+    return serialize(valid);
   }
 
   public async getUserByEmail(email: AdapterArg_0<"getUserByEmail">) {
@@ -101,13 +118,12 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.getUserByEmail(email);
-
     const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-
-    return serialize(res);
+    const valid = await schemas.getUserByEmailSchema.parseAsync(res);
+    return serialize(valid);
   }
 
   public async getUserByAccount(
@@ -120,20 +136,18 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
     } = this.defaultFetchOptions.adapterProcedures.getUserByAccount(
       providerAccountId
     );
-
     const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-
-    return serialize(res);
+    const valid = await schemas.getUserByAccountSchema.parseAsync(res);
+    return serialize(valid);
   }
 
   public async deleteUser(providerAccountId: AdapterArg_0<"deleteUser">) {
     if (!this.defaultFetchOptions.adapterProcedures.deleteUser) {
       throw new Error("deleteUser is not defined in procedures");
     }
-
     const {
       path,
       select: serialize = defaultSerializer,
@@ -141,13 +155,12 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
     } = this.defaultFetchOptions.adapterProcedures.deleteUser(
       providerAccountId
     );
-
     const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-
-    return serialize(res);
+    const valid = await schemas.deleteUserSchema.parseAsync(res);
+    return serialize(valid);
   }
 
   public async linkAccount(account: AdapterArg_0<"linkAccount">) {
@@ -156,20 +169,18 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.linkAccount(account);
-
     const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-
-    return serialize(res);
+    const valid = await schemas.linkAccountSchema.parseAsync(res);
+    return serialize(valid);
   }
 
   public async unlinkAccount(providerAccountId: AdapterArg_0<"unlinkAccount">) {
     if (!this.defaultFetchOptions.adapterProcedures.unlinkAccount) {
       throw new Error("unlinkAccount is not defined in procedures");
     }
-
     const {
       path,
       select: serialize = defaultSerializer,
@@ -177,13 +188,12 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
     } = this.defaultFetchOptions.adapterProcedures.unlinkAccount(
       providerAccountId
     );
-
     const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-
-    return serialize(res);
+    const valid = await schemas.unlinkAccountSchema.parseAsync(res);
+    return serialize(valid);
   }
 
   public async createSession(account: AdapterArg_0<"createSession">) {
@@ -192,13 +202,12 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.createSession(account);
-
     const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-
-    return serialize(res);
+    const valid = await schemas.createSessionSchema.parseAsync(res);
+    return serialize(valid);
   }
 
   public async getSessionAndUser(account: AdapterArg_0<"getSessionAndUser">) {
@@ -212,8 +221,8 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-
-    return serialize(res);
+    const valid = await schemas.getSessionAndUserSchema.parseAsync(res);
+    return serialize(valid);
   }
 
   public async updateSession(account: AdapterArg_0<"updateSession">) {
@@ -222,13 +231,12 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.updateSession(account);
-
     const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-
-    return serialize(res);
+    const valid = await schemas.updateSessionSchema.parseAsync(res);
+    return serialize(valid);
   }
 
   public async deleteSession(account: AdapterArg_0<"deleteSession">) {
@@ -237,13 +245,12 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.deleteSession(account);
-
     const res = ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-
-    return serialize(res);
+    const valid = await schemas.deleteSessionSchema.parseAsync(res);
+    return serialize(valid);
   }
 
   public async createVerificationToken(
@@ -265,8 +272,8 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-
-    return serialize(res);
+    const valid = await schemas.createVerificationTokenSchema.parseAsync(res);
+    return serialize(valid);
   }
 
   public async useVerificationToken(
@@ -275,7 +282,6 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
     if (!this.defaultFetchOptions.adapterProcedures.useVerificationToken) {
       throw new Error("useVerificationToken is not defined in procedures");
     }
-
     const {
       path,
       select: serialize = defaultSerializer,
@@ -283,13 +289,12 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
     } = this.defaultFetchOptions.adapterProcedures.useVerificationToken(
       providerAccountId
     );
-
     const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-
-    return serialize(res);
+    const valid = await schemas.useVerificationRequestSchema.parseAsync(res);
+    return serialize(valid);
   }
 
   public async updateUser(user: AdapterArg_0<"updateUser">) {
@@ -298,12 +303,11 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       select: serialize = defaultSerializer,
       ...fetchOptions
     } = this.defaultFetchOptions.adapterProcedures.updateUser(user);
-
     const res = await ofetch(
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-
-    return serialize(res);
+    const valid = await schemas.updateUserSchema.parseAsync(res);
+    return serialize(valid);
   }
 }

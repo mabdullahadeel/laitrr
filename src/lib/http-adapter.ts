@@ -14,7 +14,6 @@ export function httpAdpater<WithVerificationToken = boolean>(
       try {
         return await manager.getUserById(id);
       } catch (error) {
-        console.log("error", error);
         return null;
       }
     },
@@ -22,7 +21,6 @@ export function httpAdpater<WithVerificationToken = boolean>(
       try {
         return await manager.getUserByEmail(email);
       } catch (error) {
-        console.log("error", error);
         return null;
       }
     },
@@ -30,7 +28,6 @@ export function httpAdpater<WithVerificationToken = boolean>(
       try {
         return await manager.getUserByAccount(payload);
       } catch (error) {
-        console.log("error", error);
         return null;
       }
     },
@@ -41,7 +38,6 @@ export function httpAdpater<WithVerificationToken = boolean>(
       try {
         return await manager.deleteUser(userId);
       } catch (error) {
-        console.log("error", error);
         return null;
       }
     },
@@ -49,7 +45,6 @@ export function httpAdpater<WithVerificationToken = boolean>(
       try {
         return await manager.linkAccount(account);
       } catch (error) {
-        console.log("error", error);
         return null;
       }
     },
@@ -64,7 +59,6 @@ export function httpAdpater<WithVerificationToken = boolean>(
       try {
         return await manager.getSessionAndUser(sessionToken);
       } catch (error) {
-        console.log("error", error);
         return null;
       }
     },
@@ -72,7 +66,6 @@ export function httpAdpater<WithVerificationToken = boolean>(
       try {
         return await manager.updateSession(session);
       } catch (error) {
-        console.log("error", error);
         return null;
       }
     },
@@ -84,7 +77,6 @@ export function httpAdpater<WithVerificationToken = boolean>(
       try {
         return await manager.createVerificationToken(verificationToken);
       } catch (error) {
-        console.log("error", error);
         return null;
       }
     },
@@ -92,7 +84,6 @@ export function httpAdpater<WithVerificationToken = boolean>(
       try {
         return await manager.useVerificationToken(params);
       } catch (error) {
-        console.log("error", error);
         return null;
       }
     },
