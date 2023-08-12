@@ -1,4 +1,4 @@
-import type { Adapter, AdapterAccount, AdapterUser } from "next-auth/adapters";
+import type { Adapter } from "next-auth/adapters";
 import { ofetch, type FetchOptions } from "ofetch";
 
 import { mergeJSON } from "./json";
