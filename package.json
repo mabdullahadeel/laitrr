@@ -30,6 +30,7 @@
     "lucide-react": "0.257.0",
     "next": "^13.4.9",
     "next-auth": "^4.22.1",
+    "next-auth-http-adapter": "^0.2.0",
     "next-themes": "^0.2.1",
     "ofetch": "^1.1.1",
     "react": "^18.2.0",
