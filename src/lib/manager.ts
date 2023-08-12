@@ -1,4 +1,4 @@
-import type { Adapter } from "next-auth/adapters";
+import type { Adapter, AdapterAccount, AdapterUser } from "next-auth/adapters";
 import { ofetch, type FetchOptions } from "ofetch";
 
 import { mergeJSON } from "./json";
@@ -94,8 +94,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-    const valid = await schemas.createUserSchema.parseAsync(res);
-    return serialize(valid);
+    return await schemas.createUserSchema.parseAsync(serialize(res));
   }
 
   public async getUserById(id: AdapterArg_0<"getUser">) {
@@ -108,8 +107,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-    const valid = await schemas.getUserSchema.parseAsync(res);
-    return serialize(valid);
+    return await schemas.getUserSchema.parseAsync(serialize(res));
   }
 
   public async getUserByEmail(email: AdapterArg_0<"getUserByEmail">) {
@@ -122,8 +120,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-    const valid = await schemas.getUserByEmailSchema.parseAsync(res);
-    return serialize(valid);
+    return await schemas.getUserByEmailSchema.parseAsync(serialize(res));
   }
 
   public async getUserByAccount(
@@ -140,8 +137,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-    const valid = await schemas.getUserByAccountSchema.parseAsync(res);
-    return serialize(valid);
+    return await schemas.getUserByAccountSchema.parseAsync(serialize(res));
   }
 
   public async deleteUser(providerAccountId: AdapterArg_0<"deleteUser">) {
@@ -159,8 +155,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-    const valid = await schemas.deleteUserSchema.parseAsync(res);
-    return serialize(valid);
+    return await schemas.deleteUserSchema.parseAsync(serialize(res));
   }
 
   public async linkAccount(account: AdapterArg_0<"linkAccount">) {
@@ -173,8 +168,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-    const valid = await schemas.linkAccountSchema.parseAsync(res);
-    return serialize(valid);
+    return await schemas.linkAccountSchema.parseAsync(serialize(res));
   }
 
   public async unlinkAccount(providerAccountId: AdapterArg_0<"unlinkAccount">) {
@@ -192,8 +186,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-    const valid = await schemas.unlinkAccountSchema.parseAsync(res);
-    return serialize(valid);
+    return await schemas.unlinkAccountSchema.parseAsync(serialize(res));
   }
 
   public async createSession(account: AdapterArg_0<"createSession">) {
@@ -206,8 +199,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-    const valid = await schemas.createSessionSchema.parseAsync(res);
-    return serialize(valid);
+    return await schemas.createSessionSchema.parseAsync(serialize(res));
   }
 
   public async getSessionAndUser(account: AdapterArg_0<"getSessionAndUser">) {
@@ -221,8 +213,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-    const valid = await schemas.getSessionAndUserSchema.parseAsync(res);
-    return serialize(valid);
+    return await schemas.getSessionAndUserSchema.parseAsync(serialize(res));
   }
 
   public async updateSession(account: AdapterArg_0<"updateSession">) {
@@ -235,8 +226,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-    const valid = await schemas.updateSessionSchema.parseAsync(res);
-    return serialize(valid);
+    return await schemas.updateSessionSchema.parseAsync(serialize(res));
   }
 
   public async deleteSession(account: AdapterArg_0<"deleteSession">) {
@@ -249,8 +239,7 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-    const valid = await schemas.deleteSessionSchema.parseAsync(res);
-    return serialize(valid);
+    return await schemas.deleteSessionSchema.parseAsync(serialize(res));
   }
 
   public async createVerificationToken(
@@ -272,8 +261,9 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-    const valid = await schemas.createVerificationTokenSchema.parseAsync(res);
-    return serialize(valid);
+    return await schemas.createVerificationTokenSchema.parseAsync(
+      serialize(res)
+    );
   }
 
   public async useVerificationToken(
@@ -293,8 +283,9 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-    const valid = await schemas.useVerificationRequestSchema.parseAsync(res);
-    return serialize(valid);
+    return await schemas.useVerificationRequestSchema.parseAsync(
+      serialize(res)
+    );
   }
 
   public async updateUser(user: AdapterArg_0<"updateUser">) {
@@ -307,7 +298,6 @@ export class HttpAdpaterManager<WithVerificationToken = boolean> {
       path,
       mergeFetchOptions(fetchOptions, this.defaultFetchOptions)
     );
-    const valid = await schemas.updateUserSchema.parseAsync(res);
-    return serialize(valid);
+    return await schemas.updateUserSchema.parseAsync(serialize(res));
   }
 }
