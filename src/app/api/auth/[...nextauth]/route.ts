@@ -1,9 +1,8 @@
 import jwt from "jsonwebtoken";
 import NextAuth from "next-auth";
+import { httpAdapter } from "next-auth-http-adapter";
 import { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
-
-import { httpAdpater } from "@/lib/http-adapter";
 
 function defaultSerializer(res: any) {
   return res.data;
@@ -16,7 +15,7 @@ const handler = NextAuth({
       clientSecret: process.env.GOOGLE_OAUTH2_SECRET!,
     }),
   ],
-  adapter: httpAdpater({
+  adapter: httpAdapter({
     baseURL: "http://localhost:8000",
     headers: {
       Authorization: process.env.REMOTE_AUTH_RPC_TOKEN!,
