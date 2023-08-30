@@ -42,4 +42,16 @@ export const makeEventsRequest = {
       .json<TEventTypesResponse>();
     return res.data;
   },
+  followEvent: async (eventId: string) => {
+    const res = await privateHttpClient
+      .post(`${basePath}/follow/`, { json: { event_id: eventId } })
+      .json<StructuredResponse<{ event_id: string }>>();
+    return res.data;
+  },
+  unfollowEvent: async (eventId: string) => {
+    const res = await privateHttpClient
+      .delete(`${basePath}/${eventId}/unfollow/`)
+      .json<StructuredResponse<{ event_id: string }>>();
+    return res.data;
+  },
 };

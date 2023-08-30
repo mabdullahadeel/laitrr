@@ -10,7 +10,7 @@ export type TEventListResponseItem = {
 
 export type TEventDetailsResponse = StructuredResponse<
   TEventListResponseItem & {
-    user_following_enabled: boolean;
+    user_following_event: boolean;
   } & TimeStamped
 >;
 
