@@ -86,7 +86,6 @@ export const EventOptionsMenu: React.FC<EventOptionsMenuProps> = ({
               onClick={() => deleteEventMutation.mutate()}
               disabled={deleteEventMutation.isLoading}
             >
-              <CircularSpinner />
               Yes
             </Button>
           </AlertDialogFooter>
