@@ -8,6 +8,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/constants/query-keys";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { CircularSpinner } from "@/components/ui/loading-spinner";
 
 const IndexPage = () => {
   const { data, status } = useInfiniteQuery({
@@ -26,7 +27,11 @@ const IndexPage = () => {
   });
 
   if (status === "loading") {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <CircularSpinner />
+      </div>
+    );
   }
 
   if (!data) {

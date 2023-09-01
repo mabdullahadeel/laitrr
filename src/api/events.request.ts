@@ -54,4 +54,10 @@ export const makeEventsRequest = {
       .json<StructuredResponse<{ event_id: string }>>();
     return res.data;
   },
+  deleteEvent: async (eventId: string) => {
+    const res = await privateHttpClient
+      .delete(`${basePath}/${eventId}/delete/`)
+      .json<void>();
+    return null;
+  },
 };

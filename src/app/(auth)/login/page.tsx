@@ -4,12 +4,17 @@ import { redirect } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";
+import { CircularSpinner } from "@/components/ui/loading-spinner";
 
 export default function LoginRoot() {
   const { status } = useSession();
 
   if (status === "loading") {
-    return <div>Loading...</div>;
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <CircularSpinner size={30} />
+      </div>
+    );
   }
 
   if (status === "authenticated") {
