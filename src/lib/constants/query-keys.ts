@@ -5,4 +5,5 @@ export const queryKeys = {
   EVENTS_FEED: "eventsFeed",
   EVENT_DETAILS: "eventDetails",
   EVENT_TYPES: "eventTypes",
+  LIST_EVENT_ANNOUNCEMENTS: "listEventAnnouncements",
 };

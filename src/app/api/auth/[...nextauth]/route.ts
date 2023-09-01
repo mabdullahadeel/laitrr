@@ -120,6 +120,12 @@ const handler = NextAuth({
       console.log("signIn", params.user.id);
       return true;
     },
+    async session({ session, token }) {
+      if (session.user && token.sub) {
+        session.user.id = token.sub;
+      }
+      return session;
+    },
   },
   pages: {
     signIn: "/login",

@@ -19,3 +19,8 @@ export type TimeStamped = {
   created_at: string;
   updated_at: string;
 };
+
+export type TPaginationParams = {
+  limit: number;
+  offset: number;
+};

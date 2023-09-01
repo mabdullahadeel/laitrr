@@ -1,19 +1,23 @@
-"use client";
-
 import React from "react";
-import Link from "next/link";
 import { makeEventsRequest } from "@/api/events.request";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
 import { queryKeys } from "@/lib/constants/query-keys";
-import { buttonVariants } from "@/components/ui/button";
+import { time } from "@/lib/time";
 import { Card, CardContent } from "@/components/ui/card";
 import { CircularSpinner } from "@/components/ui/loading-spinner";
 
-const IndexPage = () => {
-  const { data, status } = useInfiniteQuery({
-    queryKey: [queryKeys.EVENTS_FEED],
-    queryFn: () => makeEventsRequest.getEventsFeed(),
+interface EventAnnouncementsProps {
+  eventId: string;
+}
+
+export const EventAnnouncements: React.FC<EventAnnouncementsProps> = ({
+  eventId,
+}) => {
+  const { status, data } = useInfiniteQuery({
+    queryKey: [queryKeys.LIST_EVENT_ANNOUNCEMENTS, eventId],
+    queryFn: ({ pageParam }) =>
+      makeEventsRequest.getEventAnnouncements(eventId, pageParam),
     getNextPageParam: (lastPage) => {
       if (!lastPage.next) {
         return undefined;
@@ -23,7 +27,7 @@ const IndexPage = () => {
       const offset = url.searchParams.get("offset");
       return { limit, offset };
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: time.minuteToMillisecond(5),
   });
 
   if (status === "loading") {
@@ -45,16 +49,11 @@ const IndexPage = () => {
   return (
     <div className="md:container w-full mt-4">
       {data?.pages.map((page) =>
-        page.results.map((event) => (
-          <Card key={event.id} className="mt-2 pt-2 w-full">
-            <CardContent className="p-2 px-4 flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold">{event.title}</h2>
-                <p className="text-lg">{event.description}</p>
-              </div>
-              <Link className={buttonVariants()} href={`/events/${event.id}`}>
-                View
-              </Link>
+        page.results.map((announcement) => (
+          <Card key={announcement.id} className="mt-2 pt-2 w-full">
+            <CardContent className="p-2 px-4">
+              <h2 className="text-2xl font-bold">{announcement.title}</h2>
+              <p className="text-lg">{announcement.description}</p>
             </CardContent>
           </Card>
         ))
@@ -62,5 +61,3 @@ const IndexPage = () => {
     </div>
   );
 };
-
-export default IndexPage;
