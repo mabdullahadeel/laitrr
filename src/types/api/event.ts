@@ -1,5 +1,5 @@
-import { StructuredResponse, TimeStamped } from "./common";
-import { PublicUser } from "./user";
+import type { StructuredResponse, TimeStamped } from "./common";
+import type { PublicUser } from "./user";
 
 export type TEventListResponseItem = {
   id: string;
@@ -32,3 +32,9 @@ export type TEventTypesResponse = StructuredResponse<
     heading: string;
   } & TimeStamped)[]
 >;
+
+export type EventAnnouncement = {
+  id: string;
+  title: string;
+  description: string;
+} & TimeStamped;

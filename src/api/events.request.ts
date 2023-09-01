@@ -1,5 +1,10 @@
-import { PaginatedResponse, StructuredResponse } from "@/types/api/common";
+import type {
+  PaginatedResponse,
+  StructuredResponse,
+  TPaginationParams,
+} from "@/types/api/common";
 import {
+  EventAnnouncement,
   TEventDetailsResponse,
   TEventListResponseItem,
   TEventTypesResponse,
@@ -12,13 +17,7 @@ const basePath = "events";
 
 export const makeEventsRequest = {
   getEventsFeed: async (
-    {
-      limit,
-      offset,
-    }: {
-      limit: number;
-      offset: number;
-    } = { limit: 20, offset: 0 }
+    { limit, offset }: TPaginationParams = { limit: 20, offset: 0 }
   ) => {
     const res = await privateHttpClient
       .get(`${basePath}/`, { searchParams: { limit, offset } })
@@ -65,6 +64,15 @@ export const makeEventsRequest = {
     const res = await privateHttpClient
       .put(`${basePath}/${eventId}/update/`, { json: event })
       .json<TEventUpdateResponse>();
+    return res.data;
+  },
+  getEventAnnouncements: async (
+    eventId: string,
+    params: TPaginationParams = { limit: 20, offset: 0 }
+  ) => {
+    const res = await privateHttpClient
+      .get(`${basePath}/${eventId}/announcements/`, { searchParams: params })
+      .json<PaginatedResponse<EventAnnouncement>>();
     return res.data;
   },
 };

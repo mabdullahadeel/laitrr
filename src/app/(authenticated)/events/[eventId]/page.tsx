@@ -11,6 +11,7 @@ import { CircularSpinner } from "@/components/ui/loading-spinner";
 import { Separator } from "@/components/ui/separator";
 
 import { CreatorInfo } from "./_components/CreatorInfo";
+import { EventAnnouncements } from "./_components/EventAnnouncements";
 import { EventOptionsMenu } from "./_components/EventOptionsMenu";
 
 export default function Page({ params }: { params: { eventId: string } }) {
@@ -87,6 +88,8 @@ export default function Page({ params }: { params: { eventId: string } }) {
         />
       </div>
       <Separator className="my-2" />
+      <h2 className="text-xl font-bold mt-5">Announcements</h2>
+      <EventAnnouncements eventId={query.data.id} />
     </div>
   );
 }
