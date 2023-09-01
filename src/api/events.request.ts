@@ -3,6 +3,7 @@ import {
   TEventDetailsResponse,
   TEventListResponseItem,
   TEventTypesResponse,
+  TEventUpdateResponse,
 } from "@/types/api/event";
 
 import { privateHttpClient } from "./httpClient";
@@ -59,5 +60,11 @@ export const makeEventsRequest = {
       .delete(`${basePath}/${eventId}/delete/`)
       .json<void>();
     return null;
+  },
+  updateEvent: async <TPayload = any>(eventId: string, event: TPayload) => {
+    const res = await privateHttpClient
+      .put(`${basePath}/${eventId}/update/`, { json: event })
+      .json<TEventUpdateResponse>();
+    return res.data;
   },
 };

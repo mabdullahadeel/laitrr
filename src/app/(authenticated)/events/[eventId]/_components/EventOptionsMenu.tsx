@@ -6,23 +6,28 @@ import { Edit2, MoreVertical, Trash2 } from "lucide-react";
 
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CircularSpinner } from "@/components/ui/loading-spinner";
+import { EventForm } from "@/components/forms/event-cu";
 
 interface EventOptionsMenuProps {
   isOwner: boolean;
@@ -35,6 +40,7 @@ export const EventOptionsMenu: React.FC<EventOptionsMenuProps> = ({
 }) => {
   const router = useRouter();
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [editEventOpen, setEditEventOpen] = useState(false);
 
   const deleteEventMutation = useMutation({
     mutationFn: () => makeEventsRequest.deleteEvent(eventId),
@@ -56,7 +62,7 @@ export const EventOptionsMenu: React.FC<EventOptionsMenuProps> = ({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setEditEventOpen(true)}>
             <Edit2 className="mr-2" size={16} />
             Edit
           </DropdownMenuItem>
@@ -91,6 +97,19 @@ export const EventOptionsMenu: React.FC<EventOptionsMenuProps> = ({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <Dialog open={editEventOpen} onOpenChange={() => setEditEventOpen(false)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit event</DialogTitle>
+            <DialogDescription>
+              <EventForm
+                eventId={eventId}
+                onSuccess={() => setEditEventOpen(false)}
+              />
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
