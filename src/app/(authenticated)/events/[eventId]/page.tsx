@@ -88,8 +88,10 @@ export default function Page({ params }: { params: { eventId: string } }) {
         />
       </div>
       <Separator className="my-2" />
-      <h2 className="text-xl font-bold mt-5">Announcements</h2>
-      <EventAnnouncements eventId={query.data.id} />
+      <EventAnnouncements
+        isOwner={session?.user.id === query.data.owner.id}
+        eventId={query.data.id}
+      />
     </div>
   );
 }

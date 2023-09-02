@@ -1,8 +1,10 @@
-export type StructuredResponse<T> = {
+import { HTTPError } from "ky";
+
+export type StructuredResponse<T, E = unknown> = {
   data: T;
   status: number;
   message: string;
-  error: any | null;
+  error: E | null;
 };
 
 export type DestructuredResponse<T extends StructuredResponse<unknown>> =
@@ -23,4 +25,8 @@ export type TimeStamped = {
 export type TPaginationParams = {
   limit: number;
   offset: number;
+};
+
+export type TStructuredErrorResponse<E = any> = HTTPError & {
+  message: StructuredResponse<null, E>;
 };

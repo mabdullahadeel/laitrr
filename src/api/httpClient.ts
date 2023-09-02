@@ -49,6 +49,23 @@ export const privateHttpClient = ky.extend({
         }
       },
     ],
+    beforeError: [
+      async (error) => {
+        const { response } = error;
+        const responseBodyFromReadableStream = response?.body;
+        const jsonBody = await responseBodyFromReadableStream
+          ?.getReader()
+          .read();
+        const responsePayload = new TextDecoder("utf-8").decode(
+          jsonBody?.value
+        );
+        if (response && response.body && responsePayload) {
+          error.message = JSON.parse(responsePayload);
+        }
+
+        return error;
+      },
+    ],
   },
   retry: {
     limit: 2,

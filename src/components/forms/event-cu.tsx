@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { makeEventsRequest } from "@/api/events.request";
+import { EventFormValues, eventScheme } from "@/schemas/event";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, isPast, isToday } from "date-fns";
 import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import * as z from "zod";
 
+import { TStructuredErrorResponse } from "@/types/api/common";
 import { queryKeys } from "@/lib/constants/query-keys";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -38,38 +39,18 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 import { CircularSpinner } from "../ui/loading-spinner";
-
-const formSchema = z.object({
-  title: z
-    .string()
-    .min(3, {
-      message: "Title must be at least 3 characters long",
-    })
-    .max(250, {
-      message: "Title must be at most 250 characters long",
-    }),
-  description: z.any().optional(),
-  type: z.string().optional(),
-  start_date: z.date(),
-  resource_url: z
-    .string()
-    .regex(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/, {
-      message: "Invalid URL",
-    })
-    .optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { useToast } from "../ui/use-toast";
 
 interface EventFormProps {
   eventId?: string;
-  onSuccess?: (values: FormValues) => void;
+  onSuccess?: (values: EventFormValues) => void;
   onError?: () => void;
 }
 
 export const EventForm: React.FC<EventFormProps> = ({ eventId, ...rest }) => {
   const [eventTypePopoverOpen, setEventTypePopoverOpen] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
   const queryClient = useQueryClient();
   const { data: eventData, isLoading } = useQuery({
     queryKey: [queryKeys.EVENT_DETAILS, eventId],
@@ -80,8 +61,8 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId, ...rest }) => {
     queryKey: [queryKeys.EVENT_TYPES],
     queryFn: makeEventsRequest.fetchEventTypes,
   });
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<EventFormValues>({
+    resolver: zodResolver(eventScheme),
     defaultValues: {
       title: eventData?.title || "",
       description: eventData?.description || "",
@@ -91,20 +72,24 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId, ...rest }) => {
     },
   });
   const eventUpdateMutation = useMutation({
-    mutationFn: (payload: FormValues) =>
-      makeEventsRequest.updateEvent<FormValues>(eventId || "", payload),
+    mutationFn: (payload: EventFormValues) =>
+      makeEventsRequest.updateEvent<EventFormValues>(eventId || "", payload),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [queryKeys.EVENT_DETAILS, eventId],
       });
       rest.onSuccess?.(form.getValues());
     },
-    onError: () => {
+    onError: (e: TStructuredErrorResponse<{ message: string }>) => {
+      toast({
+        variant: "destructive",
+        description: e.message.error?.message,
+      });
       rest.onError?.();
     },
   });
   const eventCreateMutation = useMutation({
-    mutationFn: makeEventsRequest.createEvent<FormValues>,
+    mutationFn: makeEventsRequest.createEvent,
     onSuccess: () => {
       rest.onSuccess?.(form.getValues());
     },
@@ -113,7 +98,7 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId, ...rest }) => {
     },
   });
 
-  const onSubmit: SubmitHandler<FormValues> = async (values) => {
+  const onSubmit: SubmitHandler<EventFormValues> = async (values) => {
     try {
       if (!!eventId) {
         await eventUpdateMutation.mutateAsync(values, {
