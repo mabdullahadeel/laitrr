@@ -10,6 +10,7 @@ import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as z from "zod";
 
+import { TStructuredErrorResponse } from "@/types/api/common";
 import { queryKeys } from "@/lib/constants/query-keys";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 import { CircularSpinner } from "../ui/loading-spinner";
+import { useToast } from "../ui/use-toast";
 
 const formSchema = z.object({
   title: z
@@ -70,6 +72,7 @@ interface EventFormProps {
 export const EventForm: React.FC<EventFormProps> = ({ eventId, ...rest }) => {
   const [eventTypePopoverOpen, setEventTypePopoverOpen] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
   const queryClient = useQueryClient();
   const { data: eventData, isLoading } = useQuery({
     queryKey: [queryKeys.EVENT_DETAILS, eventId],
@@ -99,7 +102,11 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId, ...rest }) => {
       });
       rest.onSuccess?.(form.getValues());
     },
-    onError: () => {
+    onError: (e: TStructuredErrorResponse<{ message: string }>) => {
+      toast({
+        variant: "destructive",
+        description: e.message.error?.message,
+      });
       rest.onError?.();
     },
   });

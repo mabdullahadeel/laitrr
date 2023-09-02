@@ -61,10 +61,15 @@ export const makeEventsRequest = {
     return null;
   },
   updateEvent: async <TPayload = any>(eventId: string, event: TPayload) => {
-    const res = await privateHttpClient
-      .put(`${basePath}/${eventId}/update/`, { json: event })
-      .json<TEventUpdateResponse>();
-    return res.data;
+    try {
+      const res = await privateHttpClient
+        .put(`${basePath}/${eventId}/update/`, { json: event })
+        .json<TEventUpdateResponse>();
+      return res.data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   },
   getEventAnnouncements: async (
     eventId: string,
