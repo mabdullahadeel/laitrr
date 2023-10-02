@@ -1,103 +1,18 @@
+import { db } from "@/drizzle/db";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import jwt from "jsonwebtoken";
 import NextAuth from "next-auth";
-import { httpAdapter } from "next-auth-http-adapter";
 import { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
 
-function defaultSerializer(res: any) {
-  return res.data;
-}
-
 const handler = NextAuth({
+  adapter: DrizzleAdapter(db) as any,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_OAUTH2_KEY!,
       clientSecret: process.env.GOOGLE_OAUTH2_SECRET!,
     }),
   ],
-  adapter: httpAdapter({
-    baseURL: "http://localhost:8000",
-    headers: {
-      Authorization: process.env.REMOTE_AUTH_RPC_TOKEN!,
-    },
-    adapterProcedures: {
-      createUser(user) {
-        return {
-          path: "auth/signup/",
-          method: "POST",
-          body: user,
-          select: defaultSerializer,
-        };
-      },
-      getUserById: (id) => ({
-        path: `auth/get-user/${id}/`,
-        select: defaultSerializer,
-      }),
-      getUserByEmail: (email) => ({
-        path: `auth/get-user-by-email/${encodeURIComponent(email)}/`,
-        select: defaultSerializer,
-      }),
-      getUserByAccount: ({ providerAccountId, provider }) => ({
-        path: `auth/get-user-by-account/${encodeURIComponent(
-          provider
-        )}/${encodeURIComponent(providerAccountId)}/`,
-        select: defaultSerializer,
-      }),
-      updateUser: (user) => ({
-        path: "auth/update-user/",
-        method: "PATCH",
-        select: defaultSerializer,
-      }),
-      deleteUser: (id) => ({
-        path: `auth/delete-user/${id}/`,
-        method: "DELETE",
-      }),
-      linkAccount: (account) => ({
-        path: "auth/link-account/",
-        method: "POST",
-        body: account,
-        select: defaultSerializer,
-      }),
-      unlinkAccount: ({ provider, providerAccountId }) => ({
-        path: `auth/unlink-account/${encodeURIComponent(
-          provider
-        )}/${encodeURIComponent(providerAccountId)}/`,
-        method: "DELETE",
-      }),
-      createSession: (session) => ({
-        path: "auth/create-session/",
-        method: "POST",
-        body: session,
-        select: defaultSerializer,
-      }),
-      getSessionAndUser: (sessionToken) => ({
-        path: `auth/get-session/${sessionToken}/`,
-        select: defaultSerializer,
-      }),
-      updateSession: (session) => ({
-        path: "auth/update-session/",
-        method: "PATCH",
-        body: session,
-        select: defaultSerializer,
-      }),
-      deleteSession: (sessionToken) => ({
-        path: `auth/delete-session/${sessionToken}/`,
-        method: "DELETE",
-      }),
-      createVerificationToken: (verificationToken) => ({
-        path: "auth/create-verification-token/",
-        method: "POST",
-        body: verificationToken,
-        select: defaultSerializer,
-      }),
-      useVerificationToken: (params) => ({
-        path: "auth/use-verification-token/",
-        method: "POST",
-        body: params,
-        select: defaultSerializer,
-      }),
-    },
-  }),
   session: {
     strategy: "jwt",
   },
@@ -116,9 +31,21 @@ const handler = NextAuth({
     },
   },
   callbacks: {
-    signIn(params) {
-      console.log("signIn", params.user.id);
-      return true;
+    signIn: async (params) => {
+      try {
+        const res = await fetch("http://127.0.0.1:8000/users/signin/", {
+          method: "POST",
+          body: JSON.stringify(params),
+          headers: {
+            Authorization: process.env.REMOTE_AUTH_RPC_TOKEN!,
+            "Content-Type": "application/json",
+          },
+        });
+        return res.ok;
+      } catch (error) {
+        console.log(error);
+        return false;
+      }
     },
     async session({ session, token }) {
       if (session.user && token.sub) {
