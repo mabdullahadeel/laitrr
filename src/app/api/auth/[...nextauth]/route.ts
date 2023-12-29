@@ -33,14 +33,17 @@ const handler = NextAuth({
   callbacks: {
     signIn: async (params) => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/users/signin/", {
-          method: "POST",
-          body: JSON.stringify(params),
-          headers: {
-            Authorization: process.env.REMOTE_AUTH_RPC_TOKEN!,
-            "Content-Type": "application/json",
-          },
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL!}/users/signin/`,
+          {
+            method: "POST",
+            body: JSON.stringify(params),
+            headers: {
+              Authorization: process.env.REMOTE_AUTH_RPC_TOKEN!,
+              "Content-Type": "application/json",
+            },
+          }
+        );
         return res.ok;
       } catch (error) {
         console.log(error);

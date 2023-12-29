@@ -1,3 +1,7 @@
+export type PublicProfile = {
+  image: string | null;
+};
+
 export type PublicUser = {
   id: string;
   first_name: string;
@@ -5,9 +9,7 @@ export type PublicUser = {
   username: string;
   full_name: string;
   name_initials: string;
-  profile: {
-    id: string;
-    profile_image: string | null;
-    oauth_profile_image: string | null;
-  };
+  profile: PublicProfile;
 };
+
+export type PublicUserInfoResponse = PublicUser & { is_following: boolean };
