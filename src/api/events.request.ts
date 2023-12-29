@@ -118,4 +118,13 @@ export const makeEventsRequest = {
       .json<void>();
     return null;
   },
+  getUserEvents: async (
+    username: string,
+    params: TPaginationParams & { filter: "past" | "upcoming" }
+  ) => {
+    const res = await privateHttpClient
+      .get(`${basePath}/user/${username}`, { searchParams: params })
+      .json<PaginatedResponse<TEventListResponseItem>>();
+    return res.data;
+  },
 };
